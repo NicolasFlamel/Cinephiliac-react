@@ -1,0 +1,8 @@
+#game-form {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+@media screen and (max-width: 750px) {
+}

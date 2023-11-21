@@ -2,6 +2,11 @@ import { Link, useLocation } from 'react-router-dom';
 
 const Header = () => {
   let location = useLocation();
+  const returnBtn = (
+    <Link to={''} className="custom-btn">
+      Return Home
+    </Link>
+  );
 
   switch (location.pathname) {
     case '/':
@@ -18,23 +23,11 @@ const Header = () => {
   }
   return (
     <header className="App-header">
-      <nav>
-        <ul style={{ listStyle: 'none' }}>
-          <li>
-            <Link to={'/'}>Home</Link>
-          </li>
-          <li>
-            <Link to={'/game'}>Game</Link>
-          </li>
-          <li>
-            <Link to={'game-over'}>Game Over</Link>
-          </li>
-          <li>
-            <Link to={'score-board'}>Score board</Link>
-          </li>
-        </ul>
-      </nav>
+      {location.pathname !== '/' ? returnBtn : null}
       <h1>🎬Cinephiliac🎬</h1>
+      <Link to={'/score-board'} className="custom-btn">
+        Score board
+      </Link>
     </header>
   );
 };
