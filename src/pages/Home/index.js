@@ -1,14 +1,14 @@
 import { useNavigate } from 'react-router';
 import './styles.css';
 
-const Home = () => {
+const Home = ({ setGameMode, setGameGenre }) => {
   const navigate = useNavigate();
 
   const formSubmitHandler = (e) => {
     e.preventDefault();
-    const gameMode = e.currentTarget.game.value;
-    const genre = e.currentTarget.genre.value;
-    navigate('/game', { state: { gameMode, genre } });
+    setGameMode(e.currentTarget.game.value);
+    setGameGenre(e.currentTarget.genre.value);
+    navigate('/game');
   };
 
   return (
