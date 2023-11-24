@@ -5,8 +5,9 @@ import { Game, GameOver, Home, ScoreBoard } from './pages';
 import { useState } from 'react';
 
 function App() {
-  const [gameMode, setGameMode] = useState('boxOffice');
-  const [gameGenre, setGameGenre] = useState('allGenre');
+  const [gameMode, setGameMode] = useState('Box-Office');
+  const [gameGenre, setGameGenre] = useState('All-Genres');
+
   return (
     <div className="App">
       <Header />
