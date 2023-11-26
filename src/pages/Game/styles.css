@@ -42,3 +42,8 @@ main {
 .game #higher-lower-btns {
   flex-basis: 100%;
 }
+
+.movie-poster {
+  border: solid black;
+  max-width: 100%;
+}

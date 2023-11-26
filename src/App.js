@@ -2,11 +2,12 @@ import './App.css';
 import { Navigate, Route, Routes } from 'react-router-dom';
 import Header from './components/Header';
 import { Game, GameOver, Home, ScoreBoard } from './pages';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 
 function App() {
   const [gameMode, setGameMode] = useState('Box-Office');
   const [gameGenre, setGameGenre] = useState('All-Genres');
+  const score = useRef(0);
 
   return (
     <div className="App">
@@ -16,16 +17,28 @@ function App() {
           <Route
             path="/"
             element={
-              <Home setGameMode={setGameMode} setGameGenre={setGameGenre} />
+              <Home
+                setGameMode={setGameMode}
+                setGameGenre={setGameGenre}
+                score={score}
+              />
             }
           />
           <Route
             path="/game"
-            element={<Game gameMode={gameMode} gameGenre={gameGenre} />}
+            element={
+              <Game gameMode={gameMode} gameGenre={gameGenre} score={score} />
+            }
           />
           <Route
             path="/game-over"
-            element={<GameOver gameMode={gameMode} gameGenre={gameGenre} />}
+            element={
+              <GameOver
+                gameMode={gameMode}
+                gameGenre={gameGenre}
+                score={score}
+              />
+            }
           />
           <Route path="/score-board" element={<ScoreBoard />} />
           <Route path="/*" element={<Navigate to="/" />} />

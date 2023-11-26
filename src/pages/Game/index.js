@@ -1,16 +1,12 @@
-import { useEffect, useState } from 'react';
 import './styles.css';
-// testing purpose, remove later
-import temp from './temp.json';
+import { useEffect, useState } from 'react';
 import Movie from '../../components/Movie';
 
-const Game = ({ gameType, gameGenre }) => {
+const Game = ({ gameMode, gameGenre, score }) => {
   const [movieList, setMovieList] = useState(
     JSON.parse(localStorage.getItem(`${gameGenre}`)) || [],
   );
-  const [firstMovie, setFirstMovie] = useState(null);
-  const [secondMovie, setSecondMovie] = useState(null);
-  // get movie data. maybe props or use components
+  const [comparedMovies, setComparedMovies] = useState([]);
   const options = {
     method: 'GET',
     headers: {
@@ -20,76 +16,99 @@ const Game = ({ gameType, gameGenre }) => {
   };
 
   useEffect(() => {
-    // fetch game api
-    const fetchData = async (next) => {
-      const url =
-        'https://moviesdatabase.p.rapidapi.com' +
-        (next ? next : '/titles?startYear=2000&list=top_rated_english_250');
-
-      const response = await fetch(url, options);
-      const data = await response.json();
-      const resultsList = [...data.results];
-      const nextData = data.next ? await fetchData(data.next) : [];
-      const fullList = resultsList.concat(nextData);
-
-      return fullList;
-      // console.log('fetch', temp);
-      // localStorage.setItem(`${gameGenre}`, JSON.stringify(temp));
-      // setMovieList(temp);
-      // return temp;
-    };
-
     if (!movieList.length) {
-      fetchData()
-        .then((fetchedMovieList) => {
-          localStorage.setItem(
-            `${gameGenre}`,
-            JSON.stringify(fetchedMovieList),
-          );
-          setMovieList(fetchedMovieList);
-        })
-        .catch(console.error);
+      fetchMovieList().then(storeMovieList).catch(console.error);
     }
-  }, [gameType, gameGenre]);
+    score.current = 0;
+    console.log('score', score.current);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
+  // fetch movie list api
+  const fetchMovieList = async (next) => {
+    const url =
+      'https://moviesdatabase.p.rapidapi.com' +
+      (next ? next : '/titles?startYear=2000&list=top_rated_english_250');
+
+    const response = await fetch(url, options);
+    const data = await response.json();
+    const resultsList = [...data.results];
+    const nextData = data.next ? await fetchMovieList(data.next) : [];
+    const fullList = resultsList.concat(nextData);
+
+    return fullList;
+  };
+
+  const storeMovieList = (fetchedMovieList) => {
+    localStorage.setItem(`${gameGenre}`, JSON.stringify(fetchedMovieList));
+    setMovieList(fetchedMovieList);
+  };
+
+  const handleClick = ({ target }) => {
+    if (!target.value) return;
+
+    // compare movies
+    target.value === '<' ? (score.current += 1) : (score.current -= 1);
+
+    // movie second movie to first and set new second movie
+    setComparedMovies((prevState) => {
+      const movieOne = { ...prevState[1] };
+      const movieTwo =
+        movieList[Math.floor(Math.random() * (movieList.length - 1))];
+      return [movieOne, movieTwo];
+    });
+
+    // remove selected movies already
+    setMovieList((prevState) =>
+      prevState.filter((movie) =>
+        movie.id === comparedMovies[0].id || movie.id === comparedMovies[1].id
+          ? false
+          : true,
+      ),
+    );
+  };
+
+  // conditional rendering
   if (movieList.length === 0) {
     return <h2>Fetching Data...</h2>;
-  } else if (!firstMovie && !secondMovie) {
-    setFirstMovie(
-      movieList[Math.floor(Math.random() * (movieList.length - 1))],
-    );
-    setSecondMovie(
-      movieList[Math.floor(Math.random() * (movieList.length - 1))],
-    );
+  } else if (comparedMovies.length === 0) {
+    const ranIndexOne = Math.floor(Math.random() * (movieList.length - 1));
+    const ranIndexTwo = Math.floor(Math.random() * (movieList.length - 1));
 
+    setComparedMovies([movieList[ranIndexOne], movieList[ranIndexTwo]]);
     return <h2>Loading Movies...</h2>;
   }
 
   return (
     <section id="game-section">
       <section id="question">
-        <em>{secondMovie.originalTitleText.text}</em> has a higher or lower{' '}
-        {gameType} amount than <em>{firstMovie.originalTitleText.text}</em>?
+        <h2>
+          <em>{comparedMovies[1].originalTitleText.text}</em> has a higher or
+          lower {gameMode} amount than{' '}
+          <em>{comparedMovies[0].originalTitleText.text}</em>?
+        </h2>
       </section>
 
       <section className="game">
-        <article id="movie-one">
-          <Movie movieData={firstMovie} />
-        </article>
-
-        <article id="movie-two">
-          <Movie movieData={secondMovie} />
-        </article>
-
+        {comparedMovies.map((movie, index) => {
+          return (
+            <article key={movie.id} className="movie-card">
+              <h2 className="game-option">
+                {gameMode + ': ' + (index === 0 ? '####' : '???')}
+              </h2>
+              <Movie movieData={movie} />
+            </article>
+          );
+        })}
         <section id="higher-lower-btns">
-          <div className="ui buttons">
-            <button type="button" value="higher" className="ui button positive">
+          <div className="ui buttons" onClick={handleClick}>
+            <button type="button" value=">" className="ui button positive">
               Higher
             </button>
 
             <div className="or"></div>
 
-            <button type="button" value="lower" className="ui button negative">
+            <button type="button" value="<" className="ui button negative">
               Lower
             </button>
           </div>

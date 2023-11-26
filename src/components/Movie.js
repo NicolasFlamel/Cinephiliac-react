@@ -1,11 +1,13 @@
 const Movie = ({ movieData }) => {
-  // console.log(movieData);
   return (
-    <section className="movie-card">
-      <h2 className="game-option"></h2>
-      <img className="movie-poster" src="" />
-      <h2 className="movie-name"></h2>
-    </section>
+    <>
+      <img
+        className="movie-poster"
+        src={movieData.primaryImage.url}
+        alt={movieData.originalTitleText.text + ' poster'}
+      />
+      <h2 className="movie-name">{movieData.originalTitleText.text}</h2>
+    </>
   );
 };
 
