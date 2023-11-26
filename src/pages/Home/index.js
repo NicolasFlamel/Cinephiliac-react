@@ -1,24 +1,24 @@
 import { useNavigate } from 'react-router';
 import './styles.css';
 
-const Home = () => {
+const Home = ({ setGameMode, setGameGenre }) => {
   const navigate = useNavigate();
 
   const formSubmitHandler = (e) => {
     e.preventDefault();
-    const gameMode = e.currentTarget.game.value;
-    const genre = e.currentTarget.genre.value;
-    navigate('/game', { state: { gameMode, genre } });
+    setGameMode(e.currentTarget.game.value);
+    setGameGenre(e.currentTarget.genre.value);
+    navigate('/game');
   };
 
   return (
     <form id="game-form" onSubmit={formSubmitHandler}>
       <select name="game" className="custom-btn">
-        <option value="box_office">Box OFfice Mode</option>
-        <option value="rating">Ratings Mode</option>
+        <option value="Box-Office">Box OFfice Mode</option>
+        <option value="Ratings">Ratings Mode</option>
       </select>
       <select name="genre" id="bo-genre" className="custom-btn">
-        <option value="all_genres">All Genre</option>
+        <option value="All-Genres">All Genre</option>
         <option value="Action">Action</option>
         <option value="Animation">Animation</option>
         <option value="Comedy">Comedy</option>
