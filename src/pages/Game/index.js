@@ -52,7 +52,10 @@ const Game = ({ gameMode, gameGenre, score }) => {
     // compare movies
     target.value === '<' ? (score.current += 1) : (score.current -= 1);
 
-    // movie second movie to first and set new second movie
+    // if we run out of movies
+    if (movieList.length === 1) return;
+
+    // moves second movie to first and set new second movie
     setComparedMovies((prevState) => {
       const movieOne = { ...prevState[1] };
       const movieTwo = movieList[movieTwoIndex];
@@ -68,9 +71,9 @@ const Game = ({ gameMode, gameGenre, score }) => {
   };
 
   // conditional rendering
-  if (movieList.length === 0) {
-    return <h2>Fetching Data...</h2>;
-  } else if (comparedMovies.length === 0) {
+  if (movieList.length === 1) return <h2>Out of Movies!</h2>;
+  else if (movieList.length === 0) return <h2>Fetching Data...</h2>;
+  else if (comparedMovies.length === 0) {
     const ranMovieOne =
       movieList[Math.floor(Math.random() * (movieList.length - 1))];
     const ranMovieTwo =
