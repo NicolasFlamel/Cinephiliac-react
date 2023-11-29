@@ -24,6 +24,17 @@ const Game = ({ gameMode, gameGenre, score }) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  useEffect(() => {
+    const fetchData = async () => {
+      const results = await Promise.all([
+        fetchMovieStats(comparedMovies[0].id),
+        fetchMovieStats(comparedMovies[1].id),
+      ]);
+    };
+
+    if (comparedMovies.length) fetchData();
+  }, [comparedMovies]);
+
   // fetch movie list api
   const fetchMovieList = async (next) => {
     const url =
@@ -37,6 +48,14 @@ const Game = ({ gameMode, gameGenre, score }) => {
     const fullList = resultsList.concat(nextData);
 
     return fullList;
+  };
+
+  const fetchMovieStats = async (movieId) => {
+    const omdbUrl = `https://www.omdbapi.com/?i=${movieId}&apikey=${process.env.REACT_APP_OMDB_Key}`;
+    console.log(omdbUrl);
+    const response = await fetch(omdbUrl);
+    const data = await response.json();
+    return data;
   };
 
   const storeMovieList = (fetchedMovieList) => {
