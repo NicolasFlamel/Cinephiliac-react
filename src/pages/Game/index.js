@@ -20,7 +20,7 @@ const Game = ({ gameMode, gameGenre, score }) => {
       fetchMovieList().then(storeMovieList).catch(console.error);
     }
     score.current = 0;
-    console.log('score', score.current);
+    // console.log('score', score.current);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -45,6 +45,8 @@ const Game = ({ gameMode, gameGenre, score }) => {
   };
 
   const handleClick = ({ target }) => {
+    const movieTwoIndex = Math.floor(Math.random() * (movieList.length - 1));
+
     if (!target.value) return;
 
     // compare movies
@@ -53,17 +55,14 @@ const Game = ({ gameMode, gameGenre, score }) => {
     // movie second movie to first and set new second movie
     setComparedMovies((prevState) => {
       const movieOne = { ...prevState[1] };
-      const movieTwo =
-        movieList[Math.floor(Math.random() * (movieList.length - 1))];
+      const movieTwo = movieList[movieTwoIndex];
       return [movieOne, movieTwo];
     });
 
     // remove selected movies already
     setMovieList((prevState) =>
       prevState.filter((movie) =>
-        movie.id === comparedMovies[0].id || movie.id === comparedMovies[1].id
-          ? false
-          : true,
+        movie.id === movieList[movieTwoIndex].id ? false : true,
       ),
     );
   };
@@ -72,10 +71,19 @@ const Game = ({ gameMode, gameGenre, score }) => {
   if (movieList.length === 0) {
     return <h2>Fetching Data...</h2>;
   } else if (comparedMovies.length === 0) {
-    const ranIndexOne = Math.floor(Math.random() * (movieList.length - 1));
-    const ranIndexTwo = Math.floor(Math.random() * (movieList.length - 1));
+    const ranMovieOne =
+      movieList[Math.floor(Math.random() * (movieList.length - 1))];
+    const ranMovieTwo =
+      movieList[Math.floor(Math.random() * (movieList.length - 1))];
 
-    setComparedMovies([movieList[ranIndexOne], movieList[ranIndexTwo]]);
+    setComparedMovies([ranMovieOne, ranMovieTwo]);
+    setMovieList((prevState) =>
+      prevState.filter((movie) =>
+        movie.id === ranMovieOne.id || movie.id === ranMovieTwo.id
+          ? false
+          : true,
+      ),
+    );
     return <h2>Loading Movies...</h2>;
   }
 
