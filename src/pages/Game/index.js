@@ -26,13 +26,20 @@ const Game = ({ gameMode, gameGenre, score }) => {
 
   useEffect(() => {
     const fetchData = async () => {
-      const results = await Promise.all([
+      const [movieOneStats, movieTwoStats] = await Promise.all([
         fetchMovieStats(comparedMovies[0].id),
         fetchMovieStats(comparedMovies[1].id),
       ]);
+
+      // store data & account for no stats on box office
+      setComparedMovies((prevState) => {
+        const movieOne = { ...prevState[0], stats: { ...movieOneStats } };
+        const movieTwo = { ...prevState[1], stats: { ...movieTwoStats } };
+        return [movieOne, movieTwo];
+      });
     };
 
-    if (comparedMovies.length) fetchData();
+    if (!comparedMovies.some((movie) => movie.stats)) fetchData();
   }, [comparedMovies]);
 
   // fetch movie list api
@@ -52,7 +59,6 @@ const Game = ({ gameMode, gameGenre, score }) => {
 
   const fetchMovieStats = async (movieId) => {
     const omdbUrl = `https://www.omdbapi.com/?i=${movieId}&apikey=${process.env.REACT_APP_OMDB_Key}`;
-    console.log(omdbUrl);
     const response = await fetch(omdbUrl);
     const data = await response.json();
     return data;
@@ -124,7 +130,9 @@ const Game = ({ gameMode, gameGenre, score }) => {
           return (
             <article key={movie.id} className="movie-card">
               <h2 className="game-option">
-                {gameMode + ': ' + (index === 0 ? '####' : '???')}
+                {gameMode +
+                  ': ' +
+                  (index === 0 ? movie.stats?.BoxOffice || 'unknown' : '???')}
               </h2>
               <Movie movieData={movie} />
             </article>
