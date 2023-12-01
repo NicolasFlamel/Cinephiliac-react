@@ -1,5 +1,5 @@
-import { useNavigate } from 'react-router';
 import './styles.css';
+import { useNavigate } from 'react-router';
 
 const Home = ({ setGameMode, setGameGenre }) => {
   const navigate = useNavigate();

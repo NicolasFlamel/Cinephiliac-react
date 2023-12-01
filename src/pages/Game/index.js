@@ -1,6 +1,7 @@
 import './styles.css';
 import { useEffect, useState } from 'react';
 import Movie from '../../components/Movie';
+import { addMovies } from '../../utils/MovieDB';
 
 const Game = ({ gameMode, gameGenre, score }) => {
   const [movieList, setMovieList] = useState(
@@ -66,6 +67,7 @@ const Game = ({ gameMode, gameGenre, score }) => {
 
   const storeMovieList = (fetchedMovieList) => {
     localStorage.setItem(`${gameGenre}`, JSON.stringify(fetchedMovieList));
+    addMovies(fetchedMovieList);
     setMovieList(fetchedMovieList);
   };
 
