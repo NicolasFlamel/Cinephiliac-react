@@ -39,33 +39,17 @@ export const addMovies = async (movieList, genre) => {
   }
 };
 
-export const updateMovie = async (id, data) => {
-  console.log(data.genre);
-  const movie = await db.movies.get(id);
-
-  if (movie.genre.length) {
-    // const genreList =
-  }
-  data.genre = movie.genre ? [...data.genre, ...movie.genre] : data.genre;
-  return await db.movies.update(id, data);
-
-  // return db.movies.update(id, data); // return promise
+export const putMovieData = async ({
+  imdbID: imdbId,
+  BoxOffice,
+  imdbRating,
+}) => {
+  return await db.movies.update(imdbId, {
+    boxOffice: BoxOffice,
+    rating: imdbRating,
+  });
 };
 
 export const getMovieList = async (genre) => {
   return db.movies.where('genre').equals(genre).toArray();
 };
-
-// addMovies({
-//   title: "The King's Speech",
-//   imdbId: 'tt1504320',
-//   genre: ['all']
-// });
-
-// updateMovie('tt1504320', {
-//   genre: ['all'],
-//   boxOffice: '$138,797,499',
-//   score: 88,
-// });
-
-// getMovieList('all');
