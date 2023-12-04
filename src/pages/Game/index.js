@@ -8,13 +8,6 @@ const Game = ({ gameMode, gameGenre, score }) => {
     JSON.parse(localStorage.getItem(`${gameGenre}`)) || [],
   );
   const [comparedMovies, setComparedMovies] = useState([]);
-  const options = {
-    method: 'GET',
-    headers: {
-      'X-RapidAPI-Key': process.env.REACT_APP_RapidAPI,
-      'X-RapidAPI-Host': 'moviesdatabase.p.rapidapi.com',
-    },
-  };
 
   useEffect(() => {
     const controller = new AbortController();
@@ -73,6 +66,13 @@ const Game = ({ gameMode, gameGenre, score }) => {
 
   // fetch movie list api
   const fetchMovieList = async (next, signal) => {
+    const options = {
+      method: 'GET',
+      headers: {
+        'X-RapidAPI-Key': process.env.REACT_APP_RapidAPI,
+        'X-RapidAPI-Host': 'moviesdatabase.p.rapidapi.com',
+      },
+    };
     // TODO: Url testing when api is back
     const url =
       'https://moviesdatabase.p.rapidapi.com' +
