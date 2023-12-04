@@ -17,19 +17,25 @@ const Game = ({ gameMode, gameGenre, score }) => {
   };
 
   useEffect(() => {
+    const controller = new AbortController();
+    const signal = controller.signal;
     if (!movieList.length) {
-      fetchMovieList().then(storeMovieList).catch(console.error);
+      fetchMovieList(null, signal).then(storeMovieList).catch(console.error);
     }
     score.current = 0;
     // console.log('score', score.current);
+    return () => controller.abort();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
+    const controller = new AbortController();
+    const signal = controller.signal;
+
     const fetchData = async () => {
       const [movieOneStats, movieTwoStats] = await Promise.all([
-        fetchMovieStats(comparedMovies[0].id),
-        fetchMovieStats(comparedMovies[1].id),
+        fetchMovieStats(comparedMovies[0].id, signal),
+        fetchMovieStats(comparedMovies[1].id, signal),
       ]);
 
       putMovieData(movieOneStats);
@@ -66,12 +72,16 @@ const Game = ({ gameMode, gameGenre, score }) => {
   }, [comparedMovies]);
 
   // fetch movie list api
-  const fetchMovieList = async (next) => {
+  const fetchMovieList = async (next, signal) => {
+    // TODO: Url testing when api is back
     const url =
       'https://moviesdatabase.p.rapidapi.com' +
-      (next ? next : '/titles?startYear=2000&list=top_rated_english_250');
+      (next
+        ? next
+        : '/titles?startYear=2000&list=top_rated_english_250' +
+          (gameGenre !== 'All-Genres' ? `&genre=${gameGenre})` : ''));
 
-    const response = await fetch(url, options);
+    const response = await fetch(url, { ...options, signal });
     const data = await response.json();
     const resultsList = [...data.results];
     const nextData = data.next ? await fetchMovieList(data.next) : [];
@@ -80,9 +90,9 @@ const Game = ({ gameMode, gameGenre, score }) => {
     return fullList;
   };
 
-  const fetchMovieStats = async (movieId) => {
+  const fetchMovieStats = async (movieId, signal) => {
     const omdbUrl = `https://www.omdbapi.com/?i=${movieId}&apikey=${process.env.REACT_APP_OMDB_Key}`;
-    const response = await fetch(omdbUrl);
+    const response = await fetch(omdbUrl, { signal });
     const data = await response.json();
     return data;
   };
