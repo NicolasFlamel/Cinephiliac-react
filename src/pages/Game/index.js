@@ -1,7 +1,7 @@
 import './styles.css';
 import { useEffect, useState } from 'react';
 import Movie from '../../components/Movie';
-import { addMovies } from '../../utils/MovieDB';
+import { addMovies, putMovieData } from '../../utils/MovieDB';
 
 const Game = ({ gameMode, gameGenre, score }) => {
   const [movieList, setMovieList] = useState(
@@ -32,15 +32,37 @@ const Game = ({ gameMode, gameGenre, score }) => {
         fetchMovieStats(comparedMovies[1].id),
       ]);
 
+      putMovieData(movieOneStats);
+      putMovieData(movieTwoStats);
+
       // store data & account for no stats on box office
       setComparedMovies((prevState) => {
-        const movieOne = { ...prevState[0], stats: { ...movieOneStats } };
-        const movieTwo = { ...prevState[1], stats: { ...movieTwoStats } };
+        const movieOne = {
+          ...prevState[0],
+          title: movieOneStats.Title,
+          boxOffice: movieOneStats.BoxOffice,
+          posterUrl: movieOneStats.Poster,
+          imdbRating: movieOneStats.imdbRating,
+        };
+        const movieTwo = {
+          ...prevState[1],
+          title: movieTwoStats.Title,
+          boxOffice: movieTwoStats.BoxOffice,
+          posterUrl: movieTwoStats.Poster,
+          imdbRating: movieTwoStats.imdbRating,
+        };
         return [movieOne, movieTwo];
       });
     };
 
-    if (!comparedMovies.some((movie) => movie.stats)) fetchData();
+    if (
+      comparedMovies.length &&
+      !comparedMovies.every((movie) => movie.posterUrl)
+    ) {
+      fetchData().catch((err) => console.error(err));
+    }
+
+    return () => controller.abort();
   }, [comparedMovies]);
 
   // fetch movie list api
@@ -106,7 +128,7 @@ const Game = ({ gameMode, gameGenre, score }) => {
     const ranMovieTwo =
       movieList[Math.floor(Math.random() * (movieList.length - 1))];
 
-    setComparedMovies([ranMovieOne, ranMovieTwo]);
+    setComparedMovies([{ id: ranMovieOne.id }, { id: ranMovieTwo.id }]);
     setMovieList((prevState) =>
       prevState.filter((movie) =>
         movie.id === ranMovieOne.id || movie.id === ranMovieTwo.id
@@ -121,9 +143,8 @@ const Game = ({ gameMode, gameGenre, score }) => {
     <section id="game-section">
       <section id="question">
         <h2>
-          <em>{comparedMovies[1].originalTitleText.text}</em> has a higher or
-          lower {gameMode} amount than{' '}
-          <em>{comparedMovies[0].originalTitleText.text}</em>?
+          <em>{comparedMovies[1].title}</em> has a higher or lower {gameMode}{' '}
+          amount than <em>{comparedMovies[0].title}</em>?
         </h2>
       </section>
 
@@ -134,7 +155,7 @@ const Game = ({ gameMode, gameGenre, score }) => {
               <h2 className="game-option">
                 {gameMode +
                   ': ' +
-                  (index === 0 ? movie.stats?.BoxOffice || 'unknown' : '???')}
+                  (index === 0 ? movie.boxOffice || 'Loading' : '???')}
               </h2>
               <Movie movieData={movie} />
             </article>

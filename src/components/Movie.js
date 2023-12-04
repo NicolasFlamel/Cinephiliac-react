@@ -5,14 +5,14 @@ const Movie = ({ movieData }) => {
     <>
       <img
         className="movie-poster"
-        src={movieData.primaryImage.url}
-        alt={movieData.originalTitleText.text + ' poster'}
+        src={movieData.posterUrl}
+        alt={movieData.title + ' poster'}
         onError={({ currentTarget }) => {
           currentTarget.onerror = null;
           currentTarget.src = noImg;
         }}
       />
-      <h2 className="movie-name">{movieData.originalTitleText.text}</h2>
+      <h2 className="movie-name">{movieData.title}</h2>
     </>
   );
 };

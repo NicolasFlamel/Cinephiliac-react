@@ -40,13 +40,17 @@ export const addMovies = async (movieList, genre) => {
 };
 
 export const putMovieData = async ({
+  Title,
   imdbID: imdbId,
   BoxOffice,
   imdbRating,
+  Poster,
 }) => {
   return await db.movies.update(imdbId, {
+    title: Title,
     boxOffice: BoxOffice,
     rating: imdbRating,
+    posterUrl: Poster,
   });
 };
 
