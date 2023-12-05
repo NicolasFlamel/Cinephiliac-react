@@ -14,19 +14,20 @@ const Movie = ({ movieData }) => {
 
   return (
     <>
-      {!imgLoaded ? (
-        <img
-          className="movie-poster"
-          src={movieData.posterUrl}
-          alt={movieData.title + ' poster'}
-          onError={({ currentTarget }) => {
-            currentTarget.onerror = null;
-            currentTarget.src = noImg;
-          }}
-        />
-      ) : (
-        <span className='img-placeholder'>Loading</span>
-      )}
+      <div className={imgLoaded ? 'movie-poster' : 'img-placeholder'}>
+        {imgLoaded ? (
+          <img
+            src={movieData.posterUrl}
+            alt={movieData.title + ' poster'}
+            onError={({ currentTarget }) => {
+              currentTarget.onerror = null;
+              currentTarget.src = noImg;
+            }}
+          />
+        ) : (
+          <span>Loading</span>
+        )}
+      </div>
       <h2 className="movie-name">{movieData.title}</h2>
     </>
   );
