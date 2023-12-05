@@ -25,7 +25,7 @@ main {
   width: 300px;
   height: 600px;
   display: flex;
-  flex-wrap: wrap;
+  flex-direction: column;
   text-align: center;
   justify-content: center;
   margin-bottom: auto;
@@ -44,6 +44,28 @@ main {
 }
 
 .movie-poster {
+  flex-basis: 1;
+}
+
+.movie-poster img {
   border: solid black;
   max-width: 100%;
+}
+
+.img-placeholder {
+  flex-grow: 1;
+  background-color: currentcolor;
+  cursor: wait;
+  display: inline-block;
+  min-height: 1em;
+  opacity: 0.5;
+  vertical-align: middle;
+
+  animation: placeholder-glow 2s ease-in-out infinite;
+}
+
+@keyframes placeholder-glow {
+  50% {
+    opacity: 0.2;
+  }
 }
