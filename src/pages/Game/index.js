@@ -2,12 +2,14 @@ import './styles.css';
 import { useEffect, useState } from 'react';
 import Movie from '../../components/Movie';
 import { addMovies, putMovieData } from '../../utils/MovieDB';
+import { useNavigate } from 'react-router-dom';
 
 const Game = ({ gameMode, gameGenre, score }) => {
   const [movieList, setMovieList] = useState(
     JSON.parse(localStorage.getItem(`${gameGenre}`)) || [],
   );
   const [comparedMovies, setComparedMovies] = useState([]);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const controller = new AbortController();
@@ -16,7 +18,7 @@ const Game = ({ gameMode, gameGenre, score }) => {
       fetchMovieList(null, signal).then(storeMovieList).catch(console.error);
     }
     score.current = 0;
-    // console.log('score', score.current);
+
     return () => controller.abort();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -103,13 +105,8 @@ const Game = ({ gameMode, gameGenre, score }) => {
     setMovieList(fetchedMovieList);
   };
 
-  const handleClick = ({ target }) => {
+  const nextMovie = () => {
     const movieTwoIndex = Math.floor(Math.random() * (movieList.length - 1));
-
-    if (!target.value) return;
-
-    // compare movies
-    target.value === '<' ? (score.current += 1) : (score.current -= 1);
 
     // if we run out of movies
     if (movieList.length === 1) return;
@@ -127,6 +124,38 @@ const Game = ({ gameMode, gameGenre, score }) => {
         movie.id === movieList[movieTwoIndex].id ? false : true,
       ),
     );
+  };
+
+  const compareMovies = (choice) => {
+    const compareFunction = {
+      '>': (x, y) => {
+        return x > y;
+      },
+      '<': (x, y) => {
+        return x < y;
+      },
+    };
+
+    const [movieOneStat, movieTwoStat] = comparedMovies.map((movie) => {
+      if (gameMode === 'Box-Office') {
+        return Number(movie.boxOffice.match(/\d+/g).join(''));
+      } else {
+        return Number(movie.imdbRating);
+      }
+    });
+
+    return compareFunction[choice](movieTwoStat, movieOneStat);
+  };
+
+  const handleAnswerClick = ({ target }) => {
+    if (!target.value) return;
+
+    const correct = compareMovies(target.value);
+
+    if (!correct) return navigate('/game-over');
+
+    score.current++;
+    nextMovie();
   };
 
   // conditional rendering
@@ -172,7 +201,7 @@ const Game = ({ gameMode, gameGenre, score }) => {
           );
         })}
         <section id="higher-lower-btns">
-          <div className="ui buttons" onClick={handleClick}>
+          <div className="ui buttons" onClick={handleAnswerClick}>
             <button type="button" value=">" className="ui button positive">
               Higher
             </button>
