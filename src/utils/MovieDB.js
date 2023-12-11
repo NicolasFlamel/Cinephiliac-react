@@ -6,9 +6,9 @@ db.version(1).stores({
   movies: 'imdbId, *genre', // Primary key and indexed props
 });
 
-export const addMovies = async (movieList, genre) => {
+export const addMoviesFromDB = async (movieList, genre) => {
   const movieListFormatted = movieList.map((movie) => ({
-    imdbId: movie.id,
+    ...movie,
     genre: [genre],
   }));
   const idList = movieListFormatted.map((movie) => movie.imdbId);
@@ -39,7 +39,7 @@ export const addMovies = async (movieList, genre) => {
   }
 };
 
-export const putMovieData = async ({
+export const putMovieDataIntoDB = async ({
   Title,
   imdbID: imdbId,
   BoxOffice,
@@ -54,6 +54,14 @@ export const putMovieData = async ({
   });
 };
 
-export const getMovieList = async (genre) => {
+export const getMovieListFromDB = async (genre) => {
   return db.movies.where('genre').equals(genre).toArray();
+};
+
+export const getMovieFromDB = async (imdbId) => {
+  return db.movies.get(imdbId);
+};
+
+export const removeMovieFromDB = async (imdbId) => {
+  return db.movies.delete(imdbId);
 };

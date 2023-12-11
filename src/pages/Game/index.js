@@ -1,23 +1,35 @@
 import './styles.css';
 import { useEffect, useState } from 'react';
 import Movie from '../../components/Movie';
-import { addMovies, putMovieData } from '../../utils/MovieDB';
+import {
+  addMoviesFromDB,
+  getMovieFromDB,
+  getMovieListFromDB,
+  putMovieDataIntoDB,
+  removeMovieFromDB,
+} from '../../utils/MovieDB';
 import { useNavigate } from 'react-router-dom';
 
 const Game = ({ gameMode, gameGenre, score }) => {
-  const [movieList, setMovieList] = useState(
-    JSON.parse(localStorage.getItem(`${gameGenre}`)) || [],
-  );
+  const [movieList, setMovieList] = useState([]);
   const [comparedMovies, setComparedMovies] = useState([]);
   const navigate = useNavigate();
 
   useEffect(() => {
     const controller = new AbortController();
     const signal = controller.signal;
-    if (!movieList.length) {
-      fetchMovieList(null, signal).then(storeMovieList).catch(console.error);
-    }
+
+    const getMovieListDB = async () => {
+      const movieListDB = await getMovieListFromDB(gameGenre);
+
+      !movieListDB.length
+        ? fetchMovieList(null, signal).then(storeMovieList).catch(console.error)
+        : setMovieList(movieListDB);
+    };
+
     score.current = 0;
+
+    getMovieListDB();
 
     return () => controller.abort();
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -29,45 +41,52 @@ const Game = ({ gameMode, gameGenre, score }) => {
 
     const fetchData = async () => {
       const [movieOneStats, movieTwoStats] = await Promise.all([
-        fetchMovieStats(comparedMovies[0].id, signal),
-        fetchMovieStats(comparedMovies[1].id, signal),
+        fetchMovieStats(comparedMovies[0].imdbId, signal),
+        fetchMovieStats(comparedMovies[1].imdbId, signal),
       ]);
 
-      putMovieData(movieOneStats);
-      putMovieData(movieTwoStats);
+      const removedMovie = [movieOneStats, movieTwoStats].map((movie) => {
+        if (movie.boxOffice !== 'N/A') return false;
+
+        removeMovie(movie.imdbId);
+        return true;
+      });
+
+      if (removedMovie.includes(true)) return;
 
       // store data & account for no stats on box office
       setComparedMovies((prevState) => {
         const movieOne = {
           ...prevState[0],
-          title: movieOneStats.Title,
-          boxOffice: movieOneStats.BoxOffice,
-          posterUrl: movieOneStats.Poster,
-          imdbRating: movieOneStats.imdbRating,
+          title: movieOneStats.title,
+          boxOffice: movieOneStats.boxOffice,
+          posterUrl: movieOneStats.posterUrl,
+          imdbRating: movieOneStats.rating,
         };
         const movieTwo = {
           ...prevState[1],
-          title: movieTwoStats.Title,
-          boxOffice: movieTwoStats.BoxOffice,
-          posterUrl: movieTwoStats.Poster,
-          imdbRating: movieTwoStats.imdbRating,
+          title: movieTwoStats.title,
+          boxOffice: movieTwoStats.boxOffice,
+          posterUrl: movieTwoStats.posterUrl,
+          imdbRating: movieTwoStats.rating,
         };
         return [movieOne, movieTwo];
       });
     };
 
     if (
-      comparedMovies.length &&
+      comparedMovies.length === 2 &&
       !comparedMovies.every((movie) => movie.posterUrl)
     ) {
       fetchData().catch((err) => console.error(err));
     }
 
     return () => controller.abort();
-  }, [comparedMovies]);
+  });
 
   // fetch movie list api
   const fetchMovieList = async (next, signal) => {
+    console.log('Fetching Movie List');
     const options = {
       method: 'GET',
       headers: {
@@ -93,16 +112,34 @@ const Game = ({ gameMode, gameGenre, score }) => {
   };
 
   const fetchMovieStats = async (movieId, signal) => {
+    const movie = await getMovieFromDB(movieId);
+
+    if (movie.title) return movie;
+
+    console.log('Fetching Stats');
+
     const omdbUrl = `https://www.omdbapi.com/?i=${movieId}&apikey=${process.env.REACT_APP_OMDB_Key}`;
     const response = await fetch(omdbUrl, { signal });
     const data = await response.json();
-    return data;
+
+    // stores in indexedDB
+    putMovieDataIntoDB(data);
+
+    return {
+      imdbId: movieId,
+      title: data.Title,
+      boxOffice: data.BoxOffice,
+      posterUrl: data.Poster,
+      rating: data.imdbRating,
+    };
   };
 
   const storeMovieList = (fetchedMovieList) => {
-    localStorage.setItem(`${gameGenre}`, JSON.stringify(fetchedMovieList));
-    addMovies(fetchedMovieList);
-    setMovieList(fetchedMovieList);
+    const movieListFormatted = fetchedMovieList.map((movie) => ({
+      imdbId: movie.id,
+    }));
+    addMoviesFromDB(movieListFormatted, gameGenre);
+    setMovieList(movieListFormatted);
   };
 
   const nextMovie = () => {
@@ -121,9 +158,24 @@ const Game = ({ gameMode, gameGenre, score }) => {
     // remove selected movies already
     setMovieList((prevState) =>
       prevState.filter((movie) =>
-        movie.id === movieList[movieTwoIndex].id ? false : true,
+        movie.imdbId === movieList[movieTwoIndex].imdbId ? false : true,
       ),
     );
+  };
+
+  const removeMovie = async (imdbId) => {
+    const randomMovie =
+      movieList[Math.floor(Math.random() * (movieList.length - 1))];
+
+    setMovieList((prevState) => [
+      ...prevState.filter((movie) => movie.imdbId !== imdbId),
+    ]);
+    setComparedMovies((prevState) => [
+      ...prevState.map((movie) =>
+        movie.imdbId === imdbId ? randomMovie : movie,
+      ),
+    ]);
+    await removeMovieFromDB(imdbId);
   };
 
   const compareMovies = (choice) => {
@@ -162,15 +214,18 @@ const Game = ({ gameMode, gameGenre, score }) => {
   if (movieList.length === 1) return <h2>Out of Movies!</h2>;
   else if (movieList.length === 0) return <h2>Fetching Data...</h2>;
   else if (comparedMovies.length === 0) {
-    const ranMovieOne =
-      movieList[Math.floor(Math.random() * (movieList.length - 1))];
-    const ranMovieTwo =
-      movieList[Math.floor(Math.random() * (movieList.length - 1))];
+    const ranMovieOne = movieList[Math.floor(Math.random() * movieList.length)];
+    let ranMovieTwo = movieList[Math.floor(Math.random() * movieList.length)];
 
-    setComparedMovies([{ id: ranMovieOne.id }, { id: ranMovieTwo.id }]);
+    while (ranMovieOne.imdbId === ranMovieTwo.imdbId) {
+      ranMovieTwo = movieList[Math.floor(Math.random() * movieList.length)];
+    }
+
+    setComparedMovies([ranMovieOne, ranMovieTwo]);
     setMovieList((prevState) =>
       prevState.filter((movie) =>
-        movie.id === ranMovieOne.id || movie.id === ranMovieTwo.id
+        movie.imdbId === ranMovieOne.imdbId ||
+        movie.imdbId === ranMovieTwo.imdbId
           ? false
           : true,
       ),
@@ -190,7 +245,7 @@ const Game = ({ gameMode, gameGenre, score }) => {
       <section className="game">
         {comparedMovies.map((movie, index) => {
           return (
-            <article key={movie.id} className="movie-card">
+            <article key={movie.imdbId} className="movie-card">
               <h2 className="game-option">
                 {gameMode +
                   ': ' +
