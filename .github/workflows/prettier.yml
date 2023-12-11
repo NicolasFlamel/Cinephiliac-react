@@ -1,6 +1,9 @@
 name: Prettier
 run-name: ${{ github.actor }} is testing out GitHub Actions 🚀
-on: [pull_request]
+on:
+  pull_request:
+  push:
+    branches: [main]
 jobs:
   prettier:
     name: Prettier Check
