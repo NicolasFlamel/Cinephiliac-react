@@ -92,7 +92,7 @@ const Game = ({ gameMode, gameGenre, score }) => {
       headers: {
         'X-RapidAPI-Key': process.env.REACT_APP_RAPID_API,
         'X-RapidAPI-Host': 'moviesdatabase.p.rapidapi.com',
-      }
+      },
     };
     // TODO: Url testing when api is back
     const url =
