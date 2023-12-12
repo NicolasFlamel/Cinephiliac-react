@@ -3,6 +3,9 @@ on:
   push:
     branches:
       - main
+    paths:
+      - src/**
+      - public/**
 permissions:
   contents: write
 jobs:
@@ -17,8 +20,8 @@ jobs:
           npm ci
           npm run build
         env:
-          REACT_APP_RapidAPI: '${{ secrets.REACT_APP_RAPID_API }}'
-          REACT_APP_OMDB_Key: '${{ secrets.REACT_APP_OMDB_Key }}'
+          REACT_APP_RapidAPI: ${{ secrets.REACT_APP_RAPID_API }}
+          REACT_APP_OMDB_Key: ${{ secrets.REACT_APP_OMDB_Key }}
       - name: Deploy
         uses: JamesIves/github-pages-deploy-action@releases/v4
         with:
