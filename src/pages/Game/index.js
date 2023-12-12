@@ -12,6 +12,7 @@ import { fetchMovieList, fetchMovieStats } from './apiFetch';
 const Game = ({ gameMode, gameGenre, score }) => {
   const [movieList, setMovieList] = useState([]);
   const [comparedMovies, setComparedMovies] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -81,8 +82,11 @@ const Game = ({ gameMode, gameGenre, score }) => {
       comparedMovies.length === 2 &&
       !comparedMovies.every((movie) => movie.posterUrl)
     ) {
-      fetchData().catch((err) => console.error(err));
-    }
+      setIsLoading(true);
+      fetchData().catch((err) =>
+        err instanceof DOMException ? null : console.error(err),
+      );
+    } else setIsLoading(false);
 
     return () => controller.abort();
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -129,7 +133,7 @@ const Game = ({ gameMode, gameGenre, score }) => {
         movie.imdbId === imdbId ? randomMovie : movie,
       ),
     ]);
-    await removeMovieFromDB(imdbId);
+    removeMovieFromDB(imdbId);
   };
 
   const compareMovies = (choice) => {
@@ -155,6 +159,7 @@ const Game = ({ gameMode, gameGenre, score }) => {
 
   const handleAnswerClick = ({ target }) => {
     if (!target.value) return;
+    setIsLoading(true);
 
     const correct = compareMovies(target.value);
 
@@ -211,13 +216,23 @@ const Game = ({ gameMode, gameGenre, score }) => {
         })}
         <section id="higher-lower-btns">
           <div className="ui buttons" onClick={handleAnswerClick}>
-            <button type="button" value=">" className="ui button positive">
+            <button
+              type="button"
+              value=">"
+              className="ui button positive"
+              disabled={isLoading}
+            >
               Higher
             </button>
 
             <div className="or"></div>
 
-            <button type="button" value="<" className="ui button negative">
+            <button
+              type="button"
+              value="<"
+              className="ui button negative"
+              disabled={isLoading}
+            >
               Lower
             </button>
           </div>
