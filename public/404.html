@@ -1,0 +1,15 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <script>
+      const urlObj = window.location;
+      const page = urlObj.match(/\/[\s\S]+\//).toString();
+      window.location.replace(urlObj.origin + page);
+    </script>
+  </body>
+</html>
