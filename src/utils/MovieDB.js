@@ -6,7 +6,7 @@ db.version(1).stores({
   movies: 'imdbId, *genre', // Primary key and indexed props
 });
 
-export const addMoviesFromDB = async (movieList, genre) => {
+export const addMoviesToDB = async (movieList, genre) => {
   const movieListFormatted = movieList.map((movie) => ({
     ...movie,
     genre: [genre],

@@ -2,7 +2,7 @@ import './styles.css';
 import { useEffect, useState } from 'react';
 import Movie from '../../components/Movie';
 import {
-  addMoviesFromDB,
+  addMoviesToDB,
   getMovieListFromDB,
   removeMovieFromDB,
 } from '../../utils/MovieDB';
@@ -15,20 +15,49 @@ const Game = ({ gameMode, gameGenre, score }) => {
   const [isLoading, setIsLoading] = useState(true);
   const navigate = useNavigate();
 
+  // on mount getMovieList
   useEffect(() => {
     const controller = new AbortController();
     const signal = controller.signal;
 
     const getMovieListDB = async () => {
-      const movieListDB = await getMovieListFromDB(gameGenre);
+      let movieListDB = await getMovieListFromDB(gameGenre);
 
-      !movieListDB.length
-        ? fetchMovieList({ signal, gameGenre })
-            .then(storeMovieList)
-            .catch((err) =>
-              err instanceof DOMException ? null : console.error(err),
-            )
-        : setMovieList(movieListDB);
+      if (!movieListDB.length) {
+        const fetchedMovieList = await fetchMovieList({
+          signal,
+          gameGenre,
+        }).catch((err) =>
+          err instanceof DOMException ? null : console.error(err),
+        );
+
+        movieListDB = fetchedMovieList.map((movie) => ({
+          imdbId: movie.id,
+        }));
+
+        addMoviesToDB(movieListDB, gameGenre);
+      }
+
+      const ranMovieOne =
+        movieListDB[Math.floor(Math.random() * movieListDB.length)];
+      let ranMovieTwo =
+        movieListDB[Math.floor(Math.random() * movieListDB.length)];
+
+      while (ranMovieOne.imdbId === ranMovieTwo.imdbId) {
+        ranMovieTwo =
+          movieListDB[Math.floor(Math.random() * movieListDB.length)];
+      }
+
+      setComparedMovies([ranMovieOne, ranMovieTwo]);
+
+      setMovieList(
+        movieListDB.filter((movie) =>
+          movie.imdbId === ranMovieOne.imdbId ||
+          movie.imdbId === ranMovieTwo.imdbId
+            ? false
+            : true,
+        ),
+      );
     };
 
     score.current = 0;
@@ -92,14 +121,6 @@ const Game = ({ gameMode, gameGenre, score }) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [movieList, comparedMovies]);
 
-  const storeMovieList = (fetchedMovieList) => {
-    const movieListFormatted = fetchedMovieList.map((movie) => ({
-      imdbId: movie.id,
-    }));
-    addMoviesFromDB(movieListFormatted, gameGenre);
-    setMovieList(movieListFormatted);
-  };
-
   const nextMovie = () => {
     const movieTwoIndex = Math.floor(Math.random() * (movieList.length - 1));
 
@@ -135,6 +156,7 @@ const Game = ({ gameMode, gameGenre, score }) => {
     ]);
     removeMovieFromDB(imdbId);
   };
+
 
   const compareMovies = (choice) => {
     const compareFunction = {
@@ -172,25 +194,7 @@ const Game = ({ gameMode, gameGenre, score }) => {
   // conditional rendering
   if (movieList.length === 1) return <h2>Out of Movies!</h2>;
   else if (movieList.length === 0) return <h2>Fetching Data...</h2>;
-  else if (comparedMovies.length === 0) {
-    const ranMovieOne = movieList[Math.floor(Math.random() * movieList.length)];
-    let ranMovieTwo = movieList[Math.floor(Math.random() * movieList.length)];
-
-    while (ranMovieOne.imdbId === ranMovieTwo.imdbId) {
-      ranMovieTwo = movieList[Math.floor(Math.random() * movieList.length)];
-    }
-
-    setComparedMovies([ranMovieOne, ranMovieTwo]);
-    setMovieList((prevState) =>
-      prevState.filter((movie) =>
-        movie.imdbId === ranMovieOne.imdbId ||
-        movie.imdbId === ranMovieTwo.imdbId
-          ? false
-          : true,
-      ),
-    );
-    return <h2>Loading Movies...</h2>;
-  }
+  else if (comparedMovies.length === 0) return <h2>Loading Movies...</h2>;
 
   return (
     <section id="game-section">
