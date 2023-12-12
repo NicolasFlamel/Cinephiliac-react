@@ -3,12 +3,11 @@ import { useEffect, useState } from 'react';
 import Movie from '../../components/Movie';
 import {
   addMoviesFromDB,
-  getMovieFromDB,
   getMovieListFromDB,
-  putMovieDataIntoDB,
   removeMovieFromDB,
 } from '../../utils/MovieDB';
 import { useNavigate } from 'react-router-dom';
+import { fetchMovieList, fetchMovieStats } from './apiFetch';
 
 const Game = ({ gameMode, gameGenre, score }) => {
   const [movieList, setMovieList] = useState([]);
@@ -23,7 +22,11 @@ const Game = ({ gameMode, gameGenre, score }) => {
       const movieListDB = await getMovieListFromDB(gameGenre);
 
       !movieListDB.length
-        ? fetchMovieList(null, signal).then(storeMovieList).catch(console.error)
+        ? fetchMovieList({ signal, gameGenre })
+            .then(storeMovieList)
+            .catch((err) =>
+              err instanceof DOMException ? null : console.error(err),
+            )
         : setMovieList(movieListDB);
     };
 
@@ -41,8 +44,8 @@ const Game = ({ gameMode, gameGenre, score }) => {
 
     const fetchData = async () => {
       const [movieOneStats, movieTwoStats] = await Promise.all([
-        fetchMovieStats(comparedMovies[0].imdbId, signal),
-        fetchMovieStats(comparedMovies[1].imdbId, signal),
+        fetchMovieStats({ imdbId: comparedMovies[0].imdbId, signal }),
+        fetchMovieStats({ imdbId: comparedMovies[1].imdbId, signal }),
       ]);
 
       const removedMovie = [movieOneStats, movieTwoStats].map((movie) => {
@@ -82,57 +85,8 @@ const Game = ({ gameMode, gameGenre, score }) => {
     }
 
     return () => controller.abort();
-  });
-
-  // fetch movie list api
-  const fetchMovieList = async (next, signal) => {
-    console.log('Fetching Movie List');
-    const options = {
-      method: 'GET',
-      headers: {
-        'X-RapidAPI-Key': process.env.REACT_APP_RAPID_API,
-        'X-RapidAPI-Host': 'moviesdatabase.p.rapidapi.com',
-      },
-    };
-    // TODO: Url testing when api is back
-    const url =
-      'https://moviesdatabase.p.rapidapi.com' +
-      (next
-        ? next
-        : '/titles?startYear=2000&list=top_rated_english_250' +
-          (gameGenre !== 'All-Genres' ? `&genre=${gameGenre})` : ''));
-
-    const response = await fetch(url, { ...options, signal });
-    const data = await response.json();
-    const resultsList = [...data.results];
-    const nextData = data.next ? await fetchMovieList(data.next) : [];
-    const fullList = resultsList.concat(nextData);
-
-    return fullList;
-  };
-
-  const fetchMovieStats = async (movieId, signal) => {
-    const movie = await getMovieFromDB(movieId);
-
-    if (movie.title) return movie;
-
-    console.log('Fetching Stats');
-
-    const omdbUrl = `https://www.omdbapi.com/?i=${movieId}&apikey=${process.env.REACT_APP_OMDB_Key}`;
-    const response = await fetch(omdbUrl, { signal });
-    const data = await response.json();
-
-    // stores in indexedDB
-    putMovieDataIntoDB(data);
-
-    return {
-      imdbId: movieId,
-      title: data.Title,
-      boxOffice: data.BoxOffice,
-      posterUrl: data.Poster,
-      rating: data.imdbRating,
-    };
-  };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [movieList, comparedMovies]);
 
   const storeMovieList = (fetchedMovieList) => {
     const movieListFormatted = fetchedMovieList.map((movie) => ({
