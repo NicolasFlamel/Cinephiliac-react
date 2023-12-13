@@ -45,6 +45,7 @@ const GameOver = ({ gameMode, gameGenre, score }) => {
             placeholder="Name"
             name="username"
             onChange={(e) => (username.current = e.target.value)}
+            disabled={saved}
           />
           <button
             type="submit"
