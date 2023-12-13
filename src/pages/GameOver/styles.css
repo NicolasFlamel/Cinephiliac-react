@@ -1,0 +1,21 @@
+h2,
+h3,
+#score {
+  text-align: center;
+  color: var(--primary-color);
+}
+
+#score,
+#user-info {
+  width: 50%;
+  margin: 20px auto;
+  padding: 10px;
+  box-shadow: 0 0 20px var(--intermediate-color);
+  border-radius: 10px;
+}
+
+#user-info div {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+}
