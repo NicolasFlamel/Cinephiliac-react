@@ -4,5 +4,26 @@
   justify-content: center;
 }
 
+#scores {
+  display: flex;
+  flex-direction: column;
+  flex-wrap: wrap;
+  margin: 30px;
+  padding: 5px;
+  justify-content: space-around;
+}
+
+th,
+td,
+h2 {
+  color: var(--blue);
+  text-shadow: 1px 1px black;
+}
+
+td {
+  font-size: 20px;
+  text-align: center;
+}
+
 @media screen and (max-width: 750px) {
 }

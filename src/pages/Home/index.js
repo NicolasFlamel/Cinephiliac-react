@@ -14,7 +14,7 @@ const Home = ({ setGameMode, setGameGenre }) => {
   return (
     <form id="game-form" onSubmit={formSubmitHandler}>
       <select name="game" className="custom-btn">
-        <option value="Box-Office">Box OFfice Mode</option>
+        <option value="Box-Office">Box Office Mode</option>
         <option value="Ratings">Ratings Mode</option>
       </select>
       <select name="genre" id="bo-genre" className="custom-btn">
