@@ -23,6 +23,7 @@ const ScoreBoard = () => {
           </tr>
           {scoreBoard
             .filter((scoreData) => scoreData.gameMode === 'Box-Office')
+            .sort((a, b) => b.score - a.score)
             .map((scoreData) => {
               return (
                 <tr key={scoreData.id}>
