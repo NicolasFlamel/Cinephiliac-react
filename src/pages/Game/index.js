@@ -28,7 +28,9 @@ const Game = ({ gameMode, gameGenre, score }) => {
           signal,
           gameGenre,
         }).catch((err) =>
-          err instanceof DOMException ? null : console.error(err),
+          err instanceof DOMException
+            ? null
+            : console.error('fetchMovieList', err),
         );
 
         if (!fetchedMovieList) return;
@@ -115,7 +117,7 @@ const Game = ({ gameMode, gameGenre, score }) => {
     ) {
       setIsLoading(true);
       fetchData().catch((err) =>
-        err instanceof DOMException ? null : console.error(err),
+        err instanceof DOMException ? null : console.error('fetchData', err),
       );
     } else setIsLoading(false);
 
