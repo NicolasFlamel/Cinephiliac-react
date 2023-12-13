@@ -64,6 +64,12 @@ main {
   animation: placeholder-glow 2s ease-in-out infinite;
 }
 
+.buttons {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
 @keyframes placeholder-glow {
   50% {
     opacity: 0.2;

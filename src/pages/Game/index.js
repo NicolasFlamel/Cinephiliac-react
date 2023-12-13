@@ -219,11 +219,11 @@ const Game = ({ gameMode, gameGenre, score }) => {
           );
         })}
         <section id="higher-lower-btns">
-          <div className="ui buttons" onClick={handleAnswerClick}>
+          <div className="buttons" onClick={handleAnswerClick}>
             <button
               type="button"
               value=">"
-              className="ui button positive"
+              className="custom-btn"
               disabled={isLoading}
             >
               Higher
@@ -234,7 +234,7 @@ const Game = ({ gameMode, gameGenre, score }) => {
             <button
               type="button"
               value="<"
-              className="ui button negative"
+              className="custom-btn"
               disabled={isLoading}
             >
               Lower
