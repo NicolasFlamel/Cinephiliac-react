@@ -191,8 +191,10 @@ const Game = ({ gameMode, gameGenre, score }) => {
 
   // conditional rendering
   if (movieList.length === 1) return <h2>Out of Movies!</h2>;
-  else if (movieList.length === 0) return <h2>Fetching Data...</h2>;
-  else if (comparedMovies.length === 0) return <h2>Loading Movies...</h2>;
+  else if (movieList.length === 0)
+    return <h2 className="loading">Fetching Data...</h2>;
+  else if (comparedMovies.length === 0)
+    return <h2 className="loading">Loading Movies...</h2>;
 
   return (
     <section id="game-section">
@@ -217,11 +219,11 @@ const Game = ({ gameMode, gameGenre, score }) => {
           );
         })}
         <section id="higher-lower-btns">
-          <div className="ui buttons" onClick={handleAnswerClick}>
+          <div className="buttons" onClick={handleAnswerClick}>
             <button
               type="button"
               value=">"
-              className="ui button positive"
+              className="custom-btn"
               disabled={isLoading}
             >
               Higher
@@ -232,7 +234,7 @@ const Game = ({ gameMode, gameGenre, score }) => {
             <button
               type="button"
               value="<"
-              className="ui button negative"
+              className="custom-btn"
               disabled={isLoading}
             >
               Lower
