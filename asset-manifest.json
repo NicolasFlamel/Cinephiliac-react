@@ -1,16 +1,16 @@
 {
   "files": {
     "main.css": "/cinephiliac-react/static/css/main.a725e96b.css",
-    "main.js": "/cinephiliac-react/static/js/main.865ef0aa.js",
+    "main.js": "/cinephiliac-react/static/js/main.e04b33d0.js",
     "static/js/787.09d2a4b8.chunk.js": "/cinephiliac-react/static/js/787.09d2a4b8.chunk.js",
     "static/media/no-image-placeholder.png": "/cinephiliac-react/static/media/no-image-placeholder.4ff290ba1e8be6b9de70.png",
     "index.html": "/cinephiliac-react/index.html",
     "main.a725e96b.css.map": "/cinephiliac-react/static/css/main.a725e96b.css.map",
-    "main.865ef0aa.js.map": "/cinephiliac-react/static/js/main.865ef0aa.js.map",
+    "main.e04b33d0.js.map": "/cinephiliac-react/static/js/main.e04b33d0.js.map",
     "787.09d2a4b8.chunk.js.map": "/cinephiliac-react/static/js/787.09d2a4b8.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.a725e96b.css",
-    "static/js/main.865ef0aa.js"
+    "static/js/main.e04b33d0.js"
   ]
 }
