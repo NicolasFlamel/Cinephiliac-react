@@ -13,6 +13,7 @@ const GameOver = ({ gameMode, gameGenre, score }) => {
     if (username.current === '') return;
 
     const userScore = {
+      id: crypto.randomUUID(),
       gameMode,
       gameGenre,
       score: score.current,
