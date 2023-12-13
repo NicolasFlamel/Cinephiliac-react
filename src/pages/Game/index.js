@@ -21,7 +21,10 @@ const Game = ({ gameMode, gameGenre, score }) => {
     const signal = controller.signal;
 
     const getMovieListDB = async () => {
+      const randomIndex = () => Math.floor(Math.random() * movieListDB.length);
       let movieListDB = await getMovieListFromDB(gameGenre);
+      const ranMovieOne = movieListDB[randomIndex()];
+      let ranMovieTwo = movieListDB[randomIndex()];
 
       if (!movieListDB.length) {
         const fetchedMovieList = await fetchMovieList({
@@ -42,15 +45,8 @@ const Game = ({ gameMode, gameGenre, score }) => {
         addMoviesToDB(movieListDB, gameGenre);
       }
 
-      const ranMovieOne =
-        movieListDB[Math.floor(Math.random() * movieListDB.length)];
-      let ranMovieTwo =
-        movieListDB[Math.floor(Math.random() * movieListDB.length)];
-
-      while (ranMovieOne.imdbId === ranMovieTwo.imdbId) {
-        ranMovieTwo =
-          movieListDB[Math.floor(Math.random() * movieListDB.length)];
-      }
+      while (ranMovieOne.imdbId === ranMovieTwo.imdbId)
+        ranMovieTwo = movieListDB[randomIndex()];
 
       setComparedMovies([ranMovieOne, ranMovieTwo]);
 
@@ -126,33 +122,26 @@ const Game = ({ gameMode, gameGenre, score }) => {
   }, [movieList, comparedMovies]);
 
   const nextMovie = () => {
-    const movieTwoIndex = Math.floor(Math.random() * (movieList.length - 1));
+    const randomMovieIndex = Math.floor(Math.random() * (movieList.length - 1));
 
     // if we run out of movies
     if (movieList.length === 1) return;
 
     // moves second movie to first and set new second movie
-    setComparedMovies((prevState) => {
-      const movieOne = { ...prevState[1] };
-      const movieTwo = movieList[movieTwoIndex];
-      return [movieOne, movieTwo];
-    });
+    setComparedMovies((prevState) => [
+      { ...prevState[1] },
+      movieList[randomMovieIndex],
+    ]);
 
     // remove selected movies already
-    setMovieList((prevState) =>
-      prevState.filter((movie) =>
-        movie.imdbId === movieList[movieTwoIndex].imdbId ? false : true,
-      ),
-    );
+    removeMovieFromState(movieList[randomMovieIndex].imdbId);
   };
 
   const removeMovie = async (imdbId) => {
     const randomMovie =
       movieList[Math.floor(Math.random() * (movieList.length - 1))];
 
-    setMovieList((prevState) => [
-      ...prevState.filter((movie) => movie.imdbId !== imdbId),
-    ]);
+    removeMovieFromState(imdbId);
     setComparedMovies((prevState) => [
       ...prevState.map((movie) =>
         movie.imdbId === imdbId ? randomMovie : movie,
@@ -161,6 +150,11 @@ const Game = ({ gameMode, gameGenre, score }) => {
     removeMovieFromDB(imdbId);
   };
 
+  const removeMovieFromState = (imdbId) => {
+    setMovieList((prevState) =>
+      prevState.filter((movie) => movie.imdbId !== imdbId),
+    );
+  };
 
   const compareMovies = (choice) => {
     const compareFunction = {
