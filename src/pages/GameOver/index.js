@@ -1,12 +1,11 @@
 import './styles.css';
 import { useRef, useState } from 'react';
+import { useLocalStorage } from '../../hooks/useLocalStorage';
 
 const GameOver = ({ gameMode, gameGenre, score }) => {
   const username = useRef('');
-  const savedScores = useRef(
-    JSON.parse(localStorage.getItem('cinephiliacSB')) || [],
-  );
   const [saved, setSaved] = useState(false);
+  const [scoreBoard, setScoreBoard] = useLocalStorage('cinephiliacSB');
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -20,9 +19,7 @@ const GameOver = ({ gameMode, gameGenre, score }) => {
       username: username.current,
     };
 
-    savedScores.current.push(userScore);
-    localStorage.setItem('cinephiliacSB', JSON.stringify(savedScores.current));
-
+    setScoreBoard(scoreBoard.concat([userScore]));
     setSaved(true);
   };
 
