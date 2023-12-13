@@ -20,7 +20,7 @@ h3,
   border-radius: 10px;
 }
 
-#user-info div {
+#user-info .user-form {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;

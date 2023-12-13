@@ -56,17 +56,32 @@ main {
   white-space: nowrap;
   font: var(--button-font);
   box-shadow: 0 9px #999;
+
+  -webkit-user-select: none; /* Safari */
+  -ms-user-select: none; /* IE 10 and IE 11 */
+  user-select: none; /* Standard syntax */
 }
 
-.custom-btn:hover {
+.custom-btn:hover:not(:disabled) {
   cursor: pointer;
   color: var(--secondary-color);
   border-color: var(--primary-color);
 }
 
-.custom-btn:active {
+.custom-btn:active:not(:disabled) {
   box-shadow: 0 5px #666;
   transform: translateY(4px);
+}
+
+.custom-btn:disabled {
+  opacity: 0.5;
+  color: linen;
+  background-color: dimgrey;
+  box-shadow: none;
+}
+
+.custom-btn:disabled:hover {
+  cursor: not-allowed;
 }
 
 a.custom-btn {
