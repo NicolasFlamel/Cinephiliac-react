@@ -21,7 +21,9 @@ export const fetchMovieList = async ({ next = false, signal, gameGenre }) => {
   const response = await fetch(url, { ...options, signal });
   const data = await response.json();
   const resultsList = [...data.results];
-  const nextData = data.next ? await fetchMovieList(data.next) : [];
+  const nextData = data.next
+    ? await fetchMovieList({ next: data.next, signal, gameGenre })
+    : [];
   const fullList = resultsList.concat(nextData);
 
   return fullList;

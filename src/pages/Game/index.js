@@ -23,8 +23,6 @@ const Game = ({ gameMode, gameGenre, score }) => {
     const getMovieListDB = async () => {
       const randomIndex = () => Math.floor(Math.random() * movieListDB.length);
       let movieListDB = await getMovieListFromDB(gameGenre);
-      const ranMovieOne = movieListDB[randomIndex()];
-      let ranMovieTwo = movieListDB[randomIndex()];
 
       if (!movieListDB.length) {
         const fetchedMovieList = await fetchMovieList({
@@ -44,6 +42,9 @@ const Game = ({ gameMode, gameGenre, score }) => {
 
         addMoviesToDB(movieListDB, gameGenre);
       }
+
+      const ranMovieOne = movieListDB[randomIndex()];
+      let ranMovieTwo = movieListDB[randomIndex()];
 
       while (ranMovieOne.imdbId === ranMovieTwo.imdbId)
         ranMovieTwo = movieListDB[randomIndex()];
