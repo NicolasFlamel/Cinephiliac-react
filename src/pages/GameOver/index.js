@@ -1,29 +1,22 @@
+import './styles.css'
+
 const GameOver = ({ gameMode, gameGenre, score }) => {
   return (
-    <div>
-      <ul>
-        <li>gameMode: {gameMode}</li>
-        <li>gameGenre: {gameGenre}</li>
-        <li>score: {score.current}</li>
-      </ul>
+    <div className="game-over-page">
       <section id="score">
         {/* display results */}
-        <h2>
-          You're score was: <span class="results"></span>
-        </h2>
+        <h2>You're score was: {score.current}</h2>
         <h3>
-          Game mode: <span class="results"></span>
+          Game mode: {gameMode === 'Box-Office' ? 'Box Office' : 'Ratings'}
         </h3>
-        <h3>
-          Genre: <span class="results"></span>
-        </h3>
+        <h3>Genre: {gameGenre === 'All-Genres' ? 'All Genres' : gameGenre}</h3>
       </section>
       <section id="user-info">
         {/* user inputs info for scoreboard */}
         <h2>Enter Player Name:</h2>
-        <div class="ui input">
-          <input class="username-input" type="text" placeholder="Name" />
-          <button class="custom-btn" id="save-btn" type="button">
+        <div>
+          <input className="username-input" type="text" placeholder="Name" />
+          <button className="custom-btn" id="save-btn" type="button">
             Save
           </button>
         </div>
