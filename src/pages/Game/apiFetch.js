@@ -31,7 +31,7 @@ export const fetchMovieList = async ({ next = false, signal, gameGenre }) => {
 export const fetchMovieStats = async ({ imdbId, signal }) => {
   const movie = await getMovieFromDB(imdbId);
 
-  if (movie.title) return movie;
+  if (movie?.title) return movie;
 
   console.log('Fetching Stats');
 

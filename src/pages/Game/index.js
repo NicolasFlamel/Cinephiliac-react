@@ -31,6 +31,8 @@ const Game = ({ gameMode, gameGenre, score }) => {
           err instanceof DOMException ? null : console.error(err),
         );
 
+        if (!fetchedMovieList) return;
+
         movieListDB = fetchedMovieList.map((movie) => ({
           imdbId: movie.id,
         }));
