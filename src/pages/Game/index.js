@@ -191,8 +191,10 @@ const Game = ({ gameMode, gameGenre, score }) => {
 
   // conditional rendering
   if (movieList.length === 1) return <h2>Out of Movies!</h2>;
-  else if (movieList.length === 0) return <h2>Fetching Data...</h2>;
-  else if (comparedMovies.length === 0) return <h2>Loading Movies...</h2>;
+  else if (movieList.length === 0)
+    return <h2 className="loading">Fetching Data...</h2>;
+  else if (comparedMovies.length === 0)
+    return <h2 className="loading">Loading Movies...</h2>;
 
   return (
     <section id="game-section">
