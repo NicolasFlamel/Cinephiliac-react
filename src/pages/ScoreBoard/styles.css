@@ -10,13 +10,14 @@
   color: #fff;
 }
 
-#scores table {
-  border-spacing: 0 px;
-  border-collapse: collapse;
-}
-
 #scores h2 {
   color: var(--secondary-color);
+}
+
+#scores tbody {
+  height: 300px;
+  display: block;
+  overflow: auto;
 }
 
 #scores tbody tr {
