@@ -1,10 +1,29 @@
-table,
-td {
+#scores table,
+#scores td {
+  margin: 1px;
   border: 1px solid #333;
 }
 
-thead,
-tfoot {
-  background-color: #333;
+#scores thead,
+#scores tfoot {
+  background-color: var(--primary-color);
   color: #fff;
+}
+
+#scores h2 {
+  color: var(--secondary-color);
+}
+
+#scores tbody {
+  height: 300px;
+  display: block;
+  overflow: auto;
+}
+
+#scores tbody tr {
+  display: flex;
+}
+
+#scores td {
+  flex: 1;
 }

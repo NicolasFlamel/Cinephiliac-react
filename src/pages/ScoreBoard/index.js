@@ -53,6 +53,7 @@ const ScoreBoard = () => {
           </tr>
           {scoreBoard
             .filter((scoreData) => scoreData.gameMode === 'Ratings')
+            .sort((a, b) => b.score - a.score)
             .map((scoreData) => {
               return (
                 <tr key={scoreData.id}>
