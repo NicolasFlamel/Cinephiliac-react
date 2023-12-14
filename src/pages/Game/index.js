@@ -213,7 +213,11 @@ const Game = ({ gameMode, gameGenre, score }) => {
               <h2 className="game-option">
                 {gameMode +
                   ': ' +
-                  (index === 0 ? movie.boxOffice || 'Loading' : '???')}
+                  (index === 0
+                    ? gameMode === 'Box-Office'
+                      ? movie.boxOffice
+                      : movie.imdbRating || 'Loading'
+                    : '???')}
               </h2>
               <Movie movieData={movie} />
             </article>
