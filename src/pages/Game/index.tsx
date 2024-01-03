@@ -1,5 +1,5 @@
 import './styles.css';
-import { useEffect, useState } from 'react';
+import { RefObject, useEffect, useState } from 'react';
 import Movie from '../../components/Movie';
 import {
   addMoviesToDB,
@@ -9,7 +9,13 @@ import {
 import { useNavigate } from 'react-router-dom';
 import { fetchMovieList, fetchMovieStats } from './apiFetch';
 
-const Game = ({ gameMode, gameGenre, score }) => {
+interface GameProps {
+  gameMode: string;
+  gameGenre: string;
+  score: RefObject<number>;
+}
+
+const Game = ({ gameMode, gameGenre, score }: GameProps) => {
   const [movieList, setMovieList] = useState([]);
   const [comparedMovies, setComparedMovies] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -28,15 +34,15 @@ const Game = ({ gameMode, gameGenre, score }) => {
         const fetchedMovieList = await fetchMovieList({
           signal,
           gameGenre,
-        }).catch((err) =>
-          err instanceof DOMException
+        }).catch((error: any) =>
+          error instanceof DOMException
             ? null
-            : console.error('fetchMovieList', err),
+            : console.error('fetchMovieList', error),
         );
 
         if (!fetchedMovieList) return;
 
-        movieListDB = fetchedMovieList.map((movie) => ({
+        movieListDB = fetchedMovieList.map((movie: { id: string }) => ({
           imdbId: movie.id,
         }));
 

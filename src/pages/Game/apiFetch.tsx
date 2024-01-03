@@ -40,15 +40,16 @@ export const fetchMovieStats = async ({ imdbId, signal }) => {
   const omdbUrl = `https://www.omdbapi.com/?i=${imdbId}&apikey=${process.env.REACT_APP_OMDB_Key}`;
   const response = await fetch(omdbUrl, { signal });
   const data = await response.json();
-
-  // stores in indexedDB
-  putMovieDataIntoDB(data);
-
-  return {
+  const movieStats = {
     imdbId,
     title: data.Title,
     boxOffice: data.BoxOffice,
     posterUrl: data.Poster,
     rating: data.imdbRating,
   };
+
+  // stores in indexedDB
+  putMovieDataIntoDB(movieStats);
+
+  return movieStats;
 };
