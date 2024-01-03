@@ -1,16 +1,8 @@
 import Dexie, { type Table } from 'dexie';
-
-interface Movies {
-  imdbId: string;
-  genre?: Array<string>;
-  title?: string;
-  boxOffice?: string;
-  rating?: string;
-  posterUrl?: string;
-}
+import { Movie } from '../types';
 
 class MySubClassedDexie extends Dexie {
-  movies!: Table<Movies>;
+  movies!: Table<Movie>;
 
   constructor() {
     super('CinephiliacDB');
@@ -26,10 +18,7 @@ db.version(1).stores({
   movies: 'imdbId, *genre', // Primary key and indexed props
 });
 
-export const addMoviesToDB = async (
-  movieList: Array<Movies>,
-  genre: string,
-) => {
+export const addMoviesToDB = async (movieList: Array<Movie>, genre: string) => {
   const movieListFormatted = movieList.map((movie) => ({
     ...movie,
     genre: [genre],
@@ -71,7 +60,7 @@ export const putMovieDataIntoDB = async ({
   boxOffice,
   posterUrl,
   rating,
-}: Movies) => {
+}: Movie) => {
   return await db.movies.update(imdbId, {
     title,
     boxOffice,
