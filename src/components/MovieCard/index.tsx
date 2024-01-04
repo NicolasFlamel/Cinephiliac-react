@@ -1,7 +1,8 @@
+import { Movie } from '../../types';
 import { useEffect, useState } from 'react';
 import noImg from '../../assets/img/no-image-placeholder.png';
 
-const Movie = ({ movieData }) => {
+const MovieCard = ({ movieData }: { movieData: Movie }) => {
   const [imgLoaded, setImgLoaded] = useState(false);
 
   useEffect(() => {
@@ -9,7 +10,7 @@ const Movie = ({ movieData }) => {
     img.onload = () => {
       setImgLoaded(true);
     };
-    img.src = movieData.posterUrl;
+    if (movieData.posterUrl) img.src = movieData.posterUrl;
   }, [movieData.posterUrl]);
 
   return (
@@ -33,4 +34,4 @@ const Movie = ({ movieData }) => {
   );
 };
 
-export default Movie;
+export default MovieCard;

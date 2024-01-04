@@ -1,23 +1,24 @@
 import './styles.css';
-import { RefObject, useEffect, useState } from 'react';
-import Movie from '../../components/Movie';
+import { Movie } from '../../types';
+import { MutableRefObject, useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import MovieCard from '../../components/MovieCard';
 import {
   addMoviesToDB,
   getMovieListFromDB,
   removeMovieFromDB,
 } from '../../utils/MovieDB';
-import { useNavigate } from 'react-router-dom';
 import { fetchMovieList, fetchMovieStats } from './apiFetch';
 
 interface GameProps {
   gameMode: string;
   gameGenre: string;
-  score: RefObject<number>;
+  score: MutableRefObject<number>;
 }
 
 const Game = ({ gameMode, gameGenre, score }: GameProps) => {
-  const [movieList, setMovieList] = useState([]);
-  const [comparedMovies, setComparedMovies] = useState([]);
+  const [movieList, setMovieList] = useState<Array<Movie>>([]);
+  const [comparedMovies, setComparedMovies] = useState<Movie[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const navigate = useNavigate();
 
@@ -75,11 +76,18 @@ const Game = ({ gameMode, gameGenre, score }: GameProps) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  // fetch rest of movieStats when movie changes
   useEffect(() => {
     const controller = new AbortController();
     const signal = controller.signal;
 
     const fetchData = async () => {
+      if (comparedMovies?.length !== 2) return setIsLoading(true);
+      else if (!comparedMovies?.every((movie) => movie.posterUrl))
+        return setIsLoading(false);
+
+      setIsLoading(true);
+
       const [movieOneStats, movieTwoStats] = await Promise.all([
         fetchMovieStats({ imdbId: comparedMovies[0].imdbId, signal }),
         fetchMovieStats({ imdbId: comparedMovies[1].imdbId, signal }),
@@ -97,14 +105,14 @@ const Game = ({ gameMode, gameGenre, score }: GameProps) => {
       // store data & account for no stats on box office
       setComparedMovies((prevState) => {
         const movieOne = {
-          ...prevState[0],
+          ...prevState![0],
           title: movieOneStats.title,
           boxOffice: movieOneStats.boxOffice,
           posterUrl: movieOneStats.posterUrl,
           imdbRating: movieOneStats.rating,
         };
         const movieTwo = {
-          ...prevState[1],
+          ...prevState![1],
           title: movieTwoStats.title,
           boxOffice: movieTwoStats.boxOffice,
           posterUrl: movieTwoStats.posterUrl,
@@ -114,15 +122,9 @@ const Game = ({ gameMode, gameGenre, score }: GameProps) => {
       });
     };
 
-    if (
-      comparedMovies.length === 2 &&
-      !comparedMovies.every((movie) => movie.posterUrl)
-    ) {
-      setIsLoading(true);
-      fetchData().catch((err) =>
-        err instanceof DOMException ? null : console.error('fetchData', err),
-      );
-    } else setIsLoading(false);
+    fetchData().catch((err) =>
+      err instanceof DOMException ? null : console.error('fetchData', err),
+    );
 
     return () => controller.abort();
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -136,7 +138,7 @@ const Game = ({ gameMode, gameGenre, score }: GameProps) => {
 
     // moves second movie to first and set new second movie
     setComparedMovies((prevState) => [
-      { ...prevState[1] },
+      { ...prevState![1] },
       movieList[randomMovieIndex],
     ]);
 
@@ -144,51 +146,57 @@ const Game = ({ gameMode, gameGenre, score }: GameProps) => {
     removeMovieFromState(movieList[randomMovieIndex].imdbId);
   };
 
-  const removeMovie = async (imdbId) => {
+  const removeMovie = async (imdbId: string) => {
     const randomMovie =
       movieList[Math.floor(Math.random() * (movieList.length - 1))];
 
     removeMovieFromState(imdbId);
+
     setComparedMovies((prevState) => [
-      ...prevState.map((movie) =>
+      ...prevState!.map((movie) =>
         movie.imdbId === imdbId ? randomMovie : movie,
       ),
     ]);
+
     removeMovieFromDB(imdbId);
   };
 
-  const removeMovieFromState = (imdbId) => {
+  const removeMovieFromState = (imdbId: string) => {
     setMovieList((prevState) =>
       prevState.filter((movie) => movie.imdbId !== imdbId),
     );
   };
 
-  const compareMovies = (choice) => {
+  const compareMovies = (choice: '>' | '<') => {
     const compareFunction = {
-      '>': (x, y) => {
+      '>': (x: number, y: number) => {
         return x > y;
       },
-      '<': (x, y) => {
+      '<': (x: number, y: number) => {
         return x < y;
       },
     };
 
+    if (!comparedMovies) return console.error('No comparedMovies to compare');
+
     const [movieOneStat, movieTwoStat] = comparedMovies.map((movie) => {
-      if (gameMode === 'Box-Office') {
-        return Number(movie.boxOffice.match(/\d+/g).join(''));
+      if (gameMode === 'Box-Office' && movie.boxOffice) {
+        return Number(movie.boxOffice.match(/\d+/g)?.join(''));
+      } else if (gameMode === 'Box-Office' && movie.rating) {
+        return Number(movie.rating);
       } else {
-        return Number(movie.imdbRating);
+        console.error(`Error in compareMovies() with genre ${gameMode}`);
+        return -1;
       }
     });
 
     return compareFunction[choice](movieTwoStat, movieOneStat);
   };
 
-  const handleAnswerClick = ({ target }) => {
-    if (!target.value) return;
+  const handleAnswerClick = (userInput: '>' | '<') => {
     setIsLoading(true);
 
-    const correct = compareMovies(target.value);
+    const correct = compareMovies(userInput);
 
     if (!correct) return navigate('/game-over');
 
@@ -222,20 +230,20 @@ const Game = ({ gameMode, gameGenre, score }: GameProps) => {
                   (index === 0
                     ? gameMode === 'Box-Office'
                       ? movie.boxOffice
-                      : movie.imdbRating || 'Loading'
+                      : movie.rating || 'Loading'
                     : '???')}
               </h2>
-              <Movie movieData={movie} />
+              <MovieCard movieData={movie} />
             </article>
           );
         })}
         <section id="higher-lower-btns">
-          <div className="buttons" onClick={handleAnswerClick}>
+          <div className="buttons">
             <button
               type="button"
-              value=">"
               className="custom-btn"
               disabled={isLoading}
+              onClick={() => handleAnswerClick('>')}
             >
               Higher
             </button>
@@ -247,6 +255,7 @@ const Game = ({ gameMode, gameGenre, score }: GameProps) => {
               value="<"
               className="custom-btn"
               disabled={isLoading}
+              onClick={() => handleAnswerClick('<')}
             >
               Lower
             </button>

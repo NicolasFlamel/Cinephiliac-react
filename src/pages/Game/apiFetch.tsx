@@ -1,12 +1,20 @@
 import { getMovieFromDB, putMovieDataIntoDB } from '../../utils/MovieDB';
 
 // fetch movie list from api
-export const fetchMovieList = async ({ next = false, signal, gameGenre }) => {
+export const fetchMovieList: any = async ({
+  next = false,
+  signal,
+  gameGenre,
+}: {
+  next?: boolean;
+  signal: AbortSignal;
+  gameGenre: string;
+}) => {
   console.log('Fetching Movie List');
   const options = {
     method: 'GET',
     headers: {
-      'X-RapidAPI-Key': process.env.REACT_APP_RAPID_API,
+      'X-RapidAPI-Key': process.env.REACT_APP_RAPID_API!,
       'X-RapidAPI-Host': 'moviesdatabase.p.rapidapi.com',
     },
   };
@@ -30,7 +38,13 @@ export const fetchMovieList = async ({ next = false, signal, gameGenre }) => {
 };
 
 // fetch movie list from api
-export const fetchMovieStats = async ({ imdbId, signal }) => {
+export const fetchMovieStats = async ({
+  imdbId,
+  signal,
+}: {
+  imdbId: string;
+  signal: AbortSignal;
+}) => {
   const movie = await getMovieFromDB(imdbId);
 
   if (movie?.title) return movie;
