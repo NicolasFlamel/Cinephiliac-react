@@ -1,3 +1,5 @@
+import { MutableRefObject } from 'react';
+
 export interface Movie {
   imdbId: string;
   genre?: Array<string>;
@@ -5,4 +7,10 @@ export interface Movie {
   boxOffice?: string;
   rating?: string;
   posterUrl?: string;
+}
+
+export interface GameProps {
+  gameMode: string;
+  gameGenre: string;
+  score: MutableRefObject<number>;
 }

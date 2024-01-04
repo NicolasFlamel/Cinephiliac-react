@@ -1,5 +1,5 @@
 import './styles.css';
-import { Movie } from '../../types';
+import { GameProps, Movie } from '../../types';
 import { MutableRefObject, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import MovieCard from '../../components/MovieCard';
@@ -9,12 +9,6 @@ import {
   removeMovieFromDB,
 } from '../../utils/MovieDB';
 import { fetchMovieList, fetchMovieStats } from './apiFetch';
-
-interface GameProps {
-  gameMode: string;
-  gameGenre: string;
-  score: MutableRefObject<number>;
-}
 
 const Game = ({ gameMode, gameGenre, score }: GameProps) => {
   const [movieList, setMovieList] = useState<Array<Movie>>([]);
