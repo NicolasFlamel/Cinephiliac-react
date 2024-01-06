@@ -1,12 +1,24 @@
-import Dexie from 'dexie';
+import Dexie, { type Table } from 'dexie';
+import { Movie } from '../types';
 
-const db = new Dexie('CinephiliacDB');
+class MySubClassedDexie extends Dexie {
+  movies!: Table<Movie>;
+
+  constructor() {
+    super('CinephiliacDB');
+    this.version(1).stores({
+      movies: 'imdbId, *genre',
+    });
+  }
+}
+
+const db = new MySubClassedDexie();
 
 db.version(1).stores({
   movies: 'imdbId, *genre', // Primary key and indexed props
 });
 
-export const addMoviesToDB = async (movieList, genre) => {
+export const addMoviesToDB = async (movieList: Array<Movie>, genre: string) => {
   const movieListFormatted = movieList.map((movie) => ({
     ...movie,
     genre: [genre],
@@ -20,9 +32,11 @@ export const addMoviesToDB = async (movieList, genre) => {
       await db.movies
         .where('imdbId')
         .anyOf(idList)
-        .modify((movie) => {
-          if (!movie.genre.includes(genre))
-            movie.genre = [...movie.genre, genre];
+        .modify((dbMovie) => {
+          if (!dbMovie.genre) console.error('No Genre object');
+          else if (!dbMovie.genre.includes(genre)) {
+            dbMovie.genre = [...dbMovie.genre, genre];
+          }
         });
     }
 
@@ -40,28 +54,28 @@ export const addMoviesToDB = async (movieList, genre) => {
 };
 
 export const putMovieDataIntoDB = async ({
-  Title,
-  imdbID: imdbId,
-  BoxOffice,
-  imdbRating,
-  Poster,
-}) => {
+  imdbId,
+  title,
+  boxOffice,
+  posterUrl,
+  rating,
+}: Movie) => {
   return await db.movies.update(imdbId, {
-    title: Title,
-    boxOffice: BoxOffice,
-    rating: imdbRating,
-    posterUrl: Poster,
+    title,
+    boxOffice,
+    rating,
+    posterUrl,
   });
 };
 
-export const getMovieListFromDB = async (genre) => {
+export const getMovieListFromDB = async (genre: string) => {
   return db.movies.where('genre').equals(genre).toArray();
 };
 
-export const getMovieFromDB = async (imdbId) => {
+export const getMovieFromDB = async (imdbId: string) => {
   return db.movies.get(imdbId);
 };
 
-export const removeMovieFromDB = async (imdbId) => {
+export const removeMovieFromDB = async (imdbId: string) => {
   return db.movies.delete(imdbId);
 };

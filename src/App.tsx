@@ -1,13 +1,13 @@
 import './App.css';
 import { Navigate, Route, Routes } from 'react-router-dom';
-import Header from './components/Header';
+import { Header } from './components';
 import { Game, GameOver, Home, ScoreBoard } from './pages';
 import { useRef, useState } from 'react';
 
 function App() {
   const [gameMode, setGameMode] = useState('Box-Office');
   const [gameGenre, setGameGenre] = useState('All-Genres');
-  const score = useRef(0);
+  const score = useRef<number>(0);
 
   return (
     <div className="App">
@@ -17,11 +17,7 @@ function App() {
           <Route
             path="/"
             element={
-              <Home
-                setGameMode={setGameMode}
-                setGameGenre={setGameGenre}
-                score={score}
-              />
+              <Home setGameMode={setGameMode} setGameGenre={setGameGenre} />
             }
           />
           <Route

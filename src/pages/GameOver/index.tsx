@@ -1,13 +1,14 @@
 import './styles.css';
+import { GameProps } from '../../types';
 import { useRef, useState } from 'react';
 import { useLocalStorage } from '../../hooks/useLocalStorage';
 
-const GameOver = ({ gameMode, gameGenre, score }) => {
+const GameOver = ({ gameMode, gameGenre, score }: GameProps) => {
   const username = useRef('');
   const [saved, setSaved] = useState(false);
   const [scoreBoard, setScoreBoard] = useLocalStorage('cinephiliacSB');
 
-  const handleSubmit = (e) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (username.current === '') return;
 

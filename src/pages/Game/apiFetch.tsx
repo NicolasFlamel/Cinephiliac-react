@@ -1,12 +1,27 @@
 import { getMovieFromDB, putMovieDataIntoDB } from '../../utils/MovieDB';
 
+interface FetchingMovieList {
+  next?: string;
+  signal: AbortSignal;
+  gameGenre: string;
+}
+
+interface FetchingMovieStats {
+  imdbId: string;
+  signal: AbortSignal;
+}
+
 // fetch movie list from api
-export const fetchMovieList = async ({ next = false, signal, gameGenre }) => {
+export const fetchMovieList: any = async ({
+  next = '',
+  signal,
+  gameGenre,
+}: FetchingMovieList) => {
   console.log('Fetching Movie List');
   const options = {
     method: 'GET',
     headers: {
-      'X-RapidAPI-Key': process.env.REACT_APP_RAPID_API,
+      'X-RapidAPI-Key': process.env.REACT_APP_RAPID_API!,
       'X-RapidAPI-Host': 'moviesdatabase.p.rapidapi.com',
     },
   };
@@ -30,7 +45,10 @@ export const fetchMovieList = async ({ next = false, signal, gameGenre }) => {
 };
 
 // fetch movie list from api
-export const fetchMovieStats = async ({ imdbId, signal }) => {
+export const fetchMovieStats = async ({
+  imdbId,
+  signal,
+}: FetchingMovieStats) => {
   const movie = await getMovieFromDB(imdbId);
 
   if (movie?.title) return movie;
@@ -40,15 +58,16 @@ export const fetchMovieStats = async ({ imdbId, signal }) => {
   const omdbUrl = `https://www.omdbapi.com/?i=${imdbId}&apikey=${process.env.REACT_APP_OMDB_Key}`;
   const response = await fetch(omdbUrl, { signal });
   const data = await response.json();
-
-  // stores in indexedDB
-  putMovieDataIntoDB(data);
-
-  return {
+  const movieStats = {
     imdbId,
     title: data.Title,
     boxOffice: data.BoxOffice,
     posterUrl: data.Poster,
     rating: data.imdbRating,
   };
+
+  // stores in indexedDB
+  putMovieDataIntoDB(movieStats);
+
+  return movieStats;
 };

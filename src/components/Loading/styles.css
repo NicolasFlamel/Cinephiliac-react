@@ -1,0 +1,74 @@
+:root {
+  --bg-color-circle: #791006;
+}
+
+.main {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+.loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background-color: black;
+  opacity: 0.5;
+}
+
+.loading:hover {
+  cursor: wait;
+}
+
+.loading .loader {
+  position: relative;
+  width: 120px;
+  height: 120px;
+}
+
+.loading .loader h2 {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  margin: 0;
+  transform: translate(-50%, -50%);
+}
+
+.loading .loader span {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  transform: rotate(calc(18deg * var(--i)));
+}
+
+.loading .loader span::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 15px;
+  height: 15px;
+  border-radius: 50%;
+  background: var(--bg-color-circle);
+  box-shadow:
+    0 0 10px var(--bg-color-circle),
+    0 0 20px var(--bg-color-circle),
+    0 0 40px var(--bg-color-circle),
+    0 0 60px var(--bg-color-circle),
+    0 0 80px var(--bg-color-circle),
+    0 0 100px var(--bg-color-circle);
+  animation: animate 2s linear infinite;
+  animation-delay: calc(0.1s * var(--i));
+}
+@keyframes animate {
+  0% {
+    transform: scale(1);
+  }
+  80%,
+  100% {
+    transform: scale(0);
+  }
+}

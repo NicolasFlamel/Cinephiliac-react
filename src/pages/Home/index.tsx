@@ -1,13 +1,26 @@
 import './styles.css';
+import { Dispatcher } from '../../types';
 import { useNavigate } from 'react-router';
 
-const Home = ({ setGameMode, setGameGenre }) => {
+interface HomeProps {
+  setGameMode: Dispatcher<string>;
+  setGameGenre: Dispatcher<string>;
+}
+
+const Home = ({ setGameMode, setGameGenre }: HomeProps) => {
   const navigate = useNavigate();
 
-  const formSubmitHandler = (e) => {
+  const formSubmitHandler = (e: React.FormEvent) => {
     e.preventDefault();
-    setGameMode(e.currentTarget.game.value);
-    setGameGenre(e.currentTarget.genre.value);
+    const target = e.target as typeof e.target & {
+      game: { value: string };
+      genre: { value: string };
+    };
+    const game = target.game.value;
+    const genre = target.genre.value;
+
+    setGameMode(game);
+    setGameGenre(genre);
     navigate('/game');
   };
 

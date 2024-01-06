@@ -10,7 +10,7 @@ const ScoreBoard = () => {
       <table id="box-office-table" className="score-table">
         <thead>
           <tr>
-            <th colSpan="3">
+            <th colSpan={3}>
               <h2>💲Box Office💲</h2>
             </th>
           </tr>
@@ -40,7 +40,7 @@ const ScoreBoard = () => {
       <table id="ratings-table" className="score-table">
         <thead>
           <tr>
-            <th colSpan="3">
+            <th colSpan={3}>
               <h2>⭐Ratings⭐</h2>
             </th>
           </tr>
