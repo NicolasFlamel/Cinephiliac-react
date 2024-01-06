@@ -34,8 +34,7 @@ export const addMoviesToDB = async (movieList: Array<Movie>, genre: string) => {
         .anyOf(idList)
         .modify((dbMovie) => {
           if (!dbMovie.genre) console.error('No Genre object');
-          else {
-            !dbMovie.genre.includes(genre);
+          else if (!dbMovie.genre.includes(genre)) {
             dbMovie.genre = [...dbMovie.genre, genre];
           }
         });

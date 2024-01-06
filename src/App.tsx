@@ -17,10 +17,7 @@ function App() {
           <Route
             path="/"
             element={
-              <Home
-                setGameMode={setGameMode}
-                setGameGenre={setGameGenre}
-              />
+              <Home setGameMode={setGameMode} setGameGenre={setGameGenre} />
             }
           />
           <Route

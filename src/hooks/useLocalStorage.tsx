@@ -1,16 +1,18 @@
+import { ScoreData, Dispatcher } from '../types';
 import { useState, useEffect } from 'react';
 
-function getStorageValue(key, defaultValue) {
+function getStorageValue(key: string, defaultValue: ScoreData[]): ScoreData[] {
   // getting stored value
   const saved = localStorage.getItem(key);
-  const initial = JSON.parse(saved);
-  return initial || defaultValue;
+  if (saved) return JSON.parse(saved);
+  else return defaultValue;
 }
 
-export const useLocalStorage = (key, defaultValue = []) => {
-  const [value, setValue] = useState(() => {
-    return getStorageValue(key, defaultValue);
-  });
+export const useLocalStorage = (
+  key: string,
+  defaultValue: ScoreData[] | [] = [],
+): [ScoreData[], Dispatcher<ScoreData[]>] => {
+  const [value, setValue] = useState(getStorageValue(key, defaultValue));
 
   useEffect(() => {
     // storing input name

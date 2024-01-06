@@ -1,4 +1,4 @@
-import { MutableRefObject } from 'react';
+import { Dispatch, MutableRefObject, SetStateAction } from 'react';
 
 export interface Movie {
   imdbId: string;
@@ -14,3 +14,13 @@ export interface GameProps {
   gameGenre: string;
   score: MutableRefObject<number>;
 }
+
+export interface ScoreData {
+  id: string;
+  gameMode: string;
+  gameGenre: string;
+  score: number;
+  username: string;
+}
+
+export type Dispatcher<T> = Dispatch<SetStateAction<T>>;
