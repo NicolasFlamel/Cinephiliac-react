@@ -8,7 +8,7 @@ const GameOver = ({ gameMode, gameGenre, score }: GameProps) => {
   const [saved, setSaved] = useState(false);
   const [scoreBoard, setScoreBoard] = useLocalStorage('cinephiliacSB');
 
-  const handleSubmit = (e: any) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (username.current === '') return;
 

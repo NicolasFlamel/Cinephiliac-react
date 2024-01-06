@@ -1,15 +1,22 @@
 import { getMovieFromDB, putMovieDataIntoDB } from '../../utils/MovieDB';
 
-// fetch movie list from api
-export const fetchMovieList: any = async ({
-  next = false,
-  signal,
-  gameGenre,
-}: {
-  next?: boolean;
+interface FetchingMovieList {
+  next?: string;
   signal: AbortSignal;
   gameGenre: string;
-}) => {
+}
+
+interface FetchingMovieStats {
+  imdbId: string;
+  signal: AbortSignal;
+}
+
+// fetch movie list from api
+export const fetchMovieList: any = async ({
+  next = '',
+  signal,
+  gameGenre,
+}: FetchingMovieList) => {
   console.log('Fetching Movie List');
   const options = {
     method: 'GET',
@@ -41,10 +48,7 @@ export const fetchMovieList: any = async ({
 export const fetchMovieStats = async ({
   imdbId,
   signal,
-}: {
-  imdbId: string;
-  signal: AbortSignal;
-}) => {
+}: FetchingMovieStats) => {
   const movie = await getMovieFromDB(imdbId);
 
   if (movie?.title) return movie;
