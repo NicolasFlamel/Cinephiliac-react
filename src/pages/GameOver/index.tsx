@@ -1,6 +1,6 @@
 import './styles.css';
 import { GameProps } from '../../types';
-import { FormEvent, FormEventHandler, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import { useLocalStorage } from '../../hooks/useLocalStorage';
 
 const GameOver = ({ gameMode, gameGenre, score }: GameProps) => {
