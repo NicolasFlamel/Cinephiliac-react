@@ -99,14 +99,14 @@ const Game = ({ gameMode, gameGenre, score }: GameProps) => {
       // store data & account for no stats on box office
       setComparedMovies((prevState) => {
         const movieOne = {
-          ...prevState![0],
+          ...prevState[0],
           title: movieOneStats.title,
           boxOffice: movieOneStats.boxOffice,
           posterUrl: movieOneStats.posterUrl,
           imdbRating: movieOneStats.rating,
         };
         const movieTwo = {
-          ...prevState![1],
+          ...prevState[1],
           title: movieTwoStats.title,
           boxOffice: movieTwoStats.boxOffice,
           posterUrl: movieTwoStats.posterUrl,
@@ -132,7 +132,7 @@ const Game = ({ gameMode, gameGenre, score }: GameProps) => {
 
     // moves second movie to first and set new second movie
     setComparedMovies((prevState) => [
-      { ...prevState![1] },
+      { ...prevState[1] },
       movieList[randomMovieIndex],
     ]);
 
@@ -147,7 +147,7 @@ const Game = ({ gameMode, gameGenre, score }: GameProps) => {
     removeMovieFromState(imdbId);
 
     setComparedMovies((prevState) => [
-      ...prevState!.map((movie) =>
+      ...prevState.map((movie) =>
         movie.imdbId === imdbId ? randomMovie : movie,
       ),
     ]);
