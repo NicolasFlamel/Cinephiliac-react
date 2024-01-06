@@ -1,6 +1,6 @@
 import './App.css';
 import { Navigate, Route, Routes } from 'react-router-dom';
-import Header from './components/Header';
+import { Header } from './components';
 import { Game, GameOver, Home, ScoreBoard } from './pages';
 import { useRef, useState } from 'react';
 

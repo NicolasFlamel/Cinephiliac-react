@@ -2,7 +2,7 @@ import './styles.css';
 import { GameProps, Movie } from '../../types';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import MovieCard from '../../components/MovieCard';
+import { Loading, MovieCard } from '../../components';
 import {
   addMoviesToDB,
   getMovieListFromDB,
@@ -200,10 +200,8 @@ const Game = ({ gameMode, gameGenre, score }: GameProps) => {
 
   // conditional rendering
   if (movieList.length === 1) return <h2>Out of Movies!</h2>;
-  else if (movieList.length === 0)
-    return <h2 className="loading">Fetching Data...</h2>;
-  else if (comparedMovies.length === 0)
-    return <h2 className="loading">Loading Movies...</h2>;
+  else if (movieList.length === 0) return <Loading />;
+  else if (comparedMovies.length === 0) return <Loading />;
 
   return (
     <section id="game-section">
