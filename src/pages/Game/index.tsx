@@ -77,7 +77,7 @@ const Game = ({ gameMode, gameGenre, score }: GameProps) => {
 
     const fetchData = async () => {
       if (comparedMovies?.length !== 2) return setIsLoading(true);
-      else if (!comparedMovies?.every((movie) => movie.posterUrl))
+      else if (comparedMovies.every((movie) => movie.posterUrl))
         return setIsLoading(false);
 
       setIsLoading(true);
