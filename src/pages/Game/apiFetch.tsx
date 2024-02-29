@@ -30,8 +30,8 @@ export const fetchMovieList: any = async ({
     'https://moviesdatabase.p.rapidapi.com' +
     (next
       ? next
-      : '/titles?startYear=2000&list=top_rated_english_250' +
-        (gameGenre !== 'All-Genres' ? `&genre=${gameGenre})` : ''));
+      : '/titles?list=top_rated_english_250&startYear=2000' +
+        (gameGenre !== 'All-Genres' ? `&genre=${gameGenre}` : ''));
 
   const response = await fetch(url, { ...options, signal });
   const data = await response.json();
