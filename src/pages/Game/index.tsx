@@ -217,7 +217,7 @@ const Game = ({ gameMode, gameGenre, score }: GameProps) => {
         {comparedMovies.map((movie, index) => {
           return (
             <article key={movie.imdbId} className="movie-card">
-              <h2 className="game-option">
+              <h2>
                 {gameMode +
                   ': ' +
                   (index === 0
