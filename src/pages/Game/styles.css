@@ -4,14 +4,24 @@ main {
 }
 
 #game-section {
-  background-color: hsl(from var(--primary-color) h s l / 0.1);
+  margin: auto;
+  max-width: 1440px;
+  text-align: center;
   border-radius: 10px;
+  background-color: hsl(from var(--primary-color) h s l / 0.1);
 }
 
 #question {
-  width: 50%;
-  margin: auto;
+  padding: 1rem;
+  min-height: 4.5em;
   text-align: center;
+
+  border-bottom: solid 2px hsla(10, 91%, 25%, 0.5);
+}
+
+#question h2 {
+  display: inline-block;
+  margin: 5px auto;
 }
 
 .game {
@@ -36,12 +46,9 @@ main {
   margin-bottom: auto;
 }
 
-.game-option {
-  height: 30px;
-}
-
 .movie-name {
   margin-top: auto;
+  text-decoration: underline;
 }
 
 .game #higher-lower-btns {

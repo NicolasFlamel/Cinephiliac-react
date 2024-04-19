@@ -207,8 +207,9 @@ const Game = ({ gameMode, gameGenre, score }: GameProps) => {
     <section id="game-section">
       <section id="question">
         <h2>
-          <em>{comparedMovies[1].title}</em> has a higher or lower {gameMode}{' '}
-          amount than <em>{comparedMovies[0].title}</em>?
+          Does <em className="movie-name">{comparedMovies[1].title}</em> have a
+          higher or lower {gameMode} amount than{' '}
+          <em className="movie-name">{comparedMovies[0].title}</em>?
         </h2>
       </section>
 
@@ -216,7 +217,7 @@ const Game = ({ gameMode, gameGenre, score }: GameProps) => {
         {comparedMovies.map((movie, index) => {
           return (
             <article key={movie.imdbId} className="movie-card">
-              <h2 className="game-option">
+              <h2>
                 {gameMode +
                   ': ' +
                   (index === 0
