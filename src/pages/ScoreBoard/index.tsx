@@ -16,7 +16,7 @@ const ScoreBoard = () => {
           </tr>
         </thead>
         <tbody>
-          <tr>
+          <tr className="table-legend">
             <td>Name</td>
             <td>Score</td>
             <td>Genre</td>
@@ -26,7 +26,7 @@ const ScoreBoard = () => {
             .sort((a, b) => b.score - a.score)
             .map((scoreData) => {
               return (
-                <tr key={scoreData.id}>
+                <tr key={scoreData.id} className="score-data">
                   <td>{scoreData.username}</td>
                   <td>{scoreData.score}</td>
                   <td>{scoreData.gameGenre}</td>
@@ -46,7 +46,7 @@ const ScoreBoard = () => {
           </tr>
         </thead>
         <tbody>
-          <tr>
+          <tr className="table-legend">
             <td>Name</td>
             <td>Score</td>
             <td>Filters</td>
@@ -56,7 +56,7 @@ const ScoreBoard = () => {
             .sort((a, b) => b.score - a.score)
             .map((scoreData) => {
               return (
-                <tr key={scoreData.id}>
+                <tr key={scoreData.id} className="score-data">
                   <td>{scoreData.username}</td>
                   <td>{scoreData.score}</td>
                   <td>{scoreData.gameGenre}</td>
