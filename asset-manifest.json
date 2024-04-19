@@ -1,16 +1,16 @@
 {
   "files": {
-    "main.css": "/cinephiliac-react/static/css/main.0e54afef.css",
-    "main.js": "/cinephiliac-react/static/js/main.61c68ffc.js",
+    "main.css": "/cinephiliac-react/static/css/main.78bb2139.css",
+    "main.js": "/cinephiliac-react/static/js/main.d343f928.js",
     "static/js/787.09d2a4b8.chunk.js": "/cinephiliac-react/static/js/787.09d2a4b8.chunk.js",
     "static/media/no-image-placeholder.png": "/cinephiliac-react/static/media/no-image-placeholder.4ff290ba1e8be6b9de70.png",
     "index.html": "/cinephiliac-react/index.html",
-    "main.0e54afef.css.map": "/cinephiliac-react/static/css/main.0e54afef.css.map",
-    "main.61c68ffc.js.map": "/cinephiliac-react/static/js/main.61c68ffc.js.map",
+    "main.78bb2139.css.map": "/cinephiliac-react/static/css/main.78bb2139.css.map",
+    "main.d343f928.js.map": "/cinephiliac-react/static/js/main.d343f928.js.map",
     "787.09d2a4b8.chunk.js.map": "/cinephiliac-react/static/js/787.09d2a4b8.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.0e54afef.css",
-    "static/js/main.61c68ffc.js"
+    "static/css/main.78bb2139.css",
+    "static/js/main.d343f928.js"
   ]
 }
