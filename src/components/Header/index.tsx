@@ -1,3 +1,4 @@
+import './styles.css';
 import { Link, useLocation } from 'react-router-dom';
 
 const Header = () => {
@@ -23,11 +24,13 @@ const Header = () => {
   }
   return (
     <header className="App-header">
-      {location.pathname !== '/' ? returnBtn : null}
-      <h1>🎬Cinephiliac🎬</h1>
-      <Link to={'/score-board'} className="custom-btn">
-        Score board
-      </Link>
+      <h1>Cinephiliac</h1>
+      <nav className="nav-btns">
+        {location.pathname !== '/' ? returnBtn : null}
+        <Link to={'/score-board'} className="custom-btn">
+          Score board
+        </Link>
+      </nav>
     </header>
   );
 };

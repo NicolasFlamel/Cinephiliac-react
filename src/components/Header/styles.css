@@ -1,0 +1,30 @@
+header {
+  display: grid;
+  justify-items: center;
+  align-items: center;
+  background-color: var(--primary-color);
+  grid-column-gap: 5px;
+  grid-template-rows: 1fr auto;
+}
+
+header h1 {
+  text-shadow: 2px 2px white;
+  text-align: center;
+  margin: 1rem;
+}
+
+header nav {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  /* margin: 1rem; */
+}
+
+@media screen and (max-width: 750px) {
+  header {
+    display: flex;
+    margin: 0;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+}
