@@ -1,13 +1,16 @@
 /* general css code to share between pages */
 @import 'https://fonts.googleapis.com/css?family=Fascinate+Inline';
+@font-face {
+  font-family: reachTheEnd;
+  src: url('./assets/fonts/ReachTheEnd-Xmz2.ttf');
+}
 
 :root {
   --primary-color: #791006;
   --intermediate-color: #c83712;
   --secondary-color: #f5d380;
-  --height-text: 30px;
-  --height-img: 445px;
-  --title-font: 'Fascinate Inline';
+
+  --title-font: reachTheEnd;
   --button-font: normal 100% 'sans-serif';
 }
 
