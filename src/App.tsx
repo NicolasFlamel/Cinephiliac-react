@@ -1,14 +1,15 @@
 import './App.css';
 import { useRef, useState } from 'react';
 import { Navigate, Route, Routes, useNavigate } from 'react-router-dom';
+import { NextUIProvider } from '@nextui-org/react';
+import { GameGenreType, GameModeType } from 'types';
 import { Game, GameOver, Home, ScoreBoard } from './pages';
 import { Header } from './components';
-import { NextUIProvider } from '@nextui-org/react';
 
 function App() {
   const navigate = useNavigate();
-  const [gameMode, setGameMode] = useState('Box-Office');
-  const [gameGenre, setGameGenre] = useState('All-Genres');
+  const [gameMode, setGameMode] = useState<GameModeType>('Box-Office');
+  const [gameGenre, setGameGenre] = useState<GameGenreType>('All-Genres');
   const score = useRef<number>(0);
 
   return (

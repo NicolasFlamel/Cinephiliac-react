@@ -1,24 +1,31 @@
 import './styles.css';
 import { useNavigate } from 'react-router';
-import { Dispatcher } from 'types';
-import { Button } from '@nextui-org/react';
+import { Dispatcher, GameGenreType, GameModeType } from 'types';
+import { Button, Select, SelectItem } from '@nextui-org/react';
+import { genres, gameModes } from './data';
 
 interface HomeProps {
-  setGameMode: Dispatcher<string>;
-  setGameGenre: Dispatcher<string>;
+  setGameMode: Dispatcher<GameModeType>;
+  setGameGenre: Dispatcher<GameGenreType>;
+}
+
+interface FormElements extends HTMLFormControlsCollection {
+  game: HTMLInputElement;
+  genre: HTMLInputElement;
+}
+
+interface YourFormElement extends HTMLFormElement {
+  readonly elements: FormElements;
 }
 
 const Home = ({ setGameMode, setGameGenre }: HomeProps) => {
   const navigate = useNavigate();
 
-  const formSubmitHandler = (e: React.FormEvent) => {
+  const formSubmitHandler = (e: React.FormEvent<YourFormElement>) => {
     e.preventDefault();
-    const target = e.target as typeof e.target & {
-      game: { value: string };
-      genre: { value: string };
-    };
-    const game = target.game.value;
-    const genre = target.genre.value;
+    const { currentTarget } = e;
+    const game = currentTarget.game.value;
+    const genre = currentTarget.genre.value;
 
     setGameMode(game);
     setGameGenre(genre);
@@ -27,22 +34,25 @@ const Home = ({ setGameMode, setGameGenre }: HomeProps) => {
 
   return (
     <form id="game-form" onSubmit={formSubmitHandler}>
-      <select name="game" className="custom-btn">
-        <option value="Box-Office">Box Office Mode</option>
-        <option value="Ratings">Ratings Mode</option>
-      </select>
-      <select name="genre" id="bo-genre" className="custom-btn">
-        <option value="All-Genres">All Genre</option>
-        <option value="Action">Action</option>
-        <option value="Animation">Animation</option>
-        <option value="Comedy">Comedy</option>
-        <option value="Crime">Crime</option>
-        <option value="Family">Family</option>
-        <option value="Horror">Horror</option>
-        <option value="Romance">Romance</option>
-        <option value="Sci-Fi">Sci-Fi</option>
-        <option value="Thriller">Thriller</option>
-      </select>
+      <Select label="Select a mode" name="game" className="custom-btn">
+        {gameModes.map((gameMode) => (
+          <SelectItem key={gameMode.value} value={gameMode.value}>
+            {gameMode.label}
+          </SelectItem>
+        ))}
+      </Select>
+      <Select
+        label="Select a genre"
+        name="genre"
+        id="bo-genre"
+        className="custom-btn"
+      >
+        {genres.map((genre) => (
+          <SelectItem key={genre.value} value={genre.value}>
+            {genre.label}
+          </SelectItem>
+        ))}
+      </Select>
       <Button type="submit" color="primary">
         Start
       </Button>
