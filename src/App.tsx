@@ -15,7 +15,7 @@ function App() {
 
   return (
     <NextUIProvider navigate={navigate}>
-      <div className="App">
+      <div className="App container mx-auto p-4 bg-foreground-200">
         <Header />
         <main>
           <Routes>
@@ -41,7 +41,7 @@ function App() {
                 />
               }
             />
-            <Route path="/score-board" element={<ScoreBoard />} />
+            <Route path="/scoreboard" element={<ScoreBoard />} />
             <Route path="/*" element={<Navigate to="/" />} />
           </Routes>
         </main>
