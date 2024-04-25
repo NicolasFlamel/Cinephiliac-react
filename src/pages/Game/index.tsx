@@ -9,6 +9,7 @@ import {
   removeMovieFromDB,
 } from 'utils/MovieDB';
 import { fetchMovieList, fetchMovieStats } from './apiFetch';
+import { Button } from '@nextui-org/react';
 
 const Game = ({ gameMode, gameGenre, score }: GameProps) => {
   const [movieList, setMovieList] = useState<Array<Movie>>([]);
@@ -232,18 +233,18 @@ const Game = ({ gameMode, gameGenre, score }: GameProps) => {
         })}
         <section id="higher-lower-btns">
           <div className="buttons">
-            <button
+            <Button
               type="button"
               className="custom-btn"
               disabled={isLoading}
               onClick={() => handleAnswerClick('>')}
             >
               Higher
-            </button>
+            </Button>
 
             <div className="or"></div>
 
-            <button
+            <Button
               type="button"
               value="<"
               className="custom-btn"
@@ -251,7 +252,7 @@ const Game = ({ gameMode, gameGenre, score }: GameProps) => {
               onClick={() => handleAnswerClick('<')}
             >
               Lower
-            </button>
+            </Button>
           </div>
         </section>
       </section>

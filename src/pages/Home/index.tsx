@@ -1,6 +1,7 @@
 import './styles.css';
 import { useNavigate } from 'react-router';
 import { Dispatcher } from 'types';
+import { Button } from '@nextui-org/react';
 
 interface HomeProps {
   setGameMode: Dispatcher<string>;
@@ -42,9 +43,9 @@ const Home = ({ setGameMode, setGameGenre }: HomeProps) => {
         <option value="Sci-Fi">Sci-Fi</option>
         <option value="Thriller">Thriller</option>
       </select>
-      <button type="submit" className="custom-btn">
+      <Button type="submit" color="primary">
         Start
-      </button>
+      </Button>
     </form>
   );
 };

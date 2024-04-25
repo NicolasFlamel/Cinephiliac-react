@@ -2,6 +2,7 @@ import './styles.css';
 import { useRef, useState } from 'react';
 import { GameProps } from 'types';
 import { useLocalStorage } from 'hooks/useLocalStorage';
+import { Button } from '@nextui-org/react';
 
 const GameOver = ({ gameMode, gameGenre, score }: GameProps) => {
   const username = useRef('');
@@ -46,14 +47,14 @@ const GameOver = ({ gameMode, gameGenre, score }: GameProps) => {
             onChange={(e) => (username.current = e.target.value)}
             disabled={saved}
           />
-          <button
+          <Button
             type="submit"
             id="save-btn"
             className="custom-btn"
             disabled={saved}
           >
             Save
-          </button>
+          </Button>
         </form>
       </section>
     </div>
