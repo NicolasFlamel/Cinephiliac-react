@@ -1,5 +1,7 @@
 import './styles.css';
 import { useLocation } from 'react-router-dom';
+import { ReactComponent as Sun } from 'assets/img/sun.svg';
+import { ReactComponent as Moon } from 'assets/img/moon.svg';
 import {
   Link,
   Navbar,
@@ -32,14 +34,15 @@ const Header = ({ setDarkMode }: HeaderProps) => {
           </NavbarItem>
         </NavbarContent>
         <NavbarContent justify="end">
-          <NavbarItem>
+          <NavbarItem className="flex flex-wrap">
             <Switch
+              size="lg"
+              startContent={<Sun fill="yellow" />}
+              endContent={<Moon fill="black" />}
               onChange={({ currentTarget }) =>
                 setDarkMode(currentTarget.checked)
               }
-            >
-              Dark Mode
-            </Switch>
+            />
           </NavbarItem>
         </NavbarContent>
       </Navbar>
