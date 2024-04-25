@@ -8,15 +8,19 @@ import { Header } from './components';
 
 function App() {
   const navigate = useNavigate();
+  const [darkMode, setDarkMode] = useState(false);
   const [gameMode, setGameMode] = useState<GameModeType>('Box-Office');
   const [gameGenre, setGameGenre] = useState<GameGenreType>('All-Genres');
   const score = useRef<number>(0);
-  document.documentElement.className = 'dark text-foreground bg-background';
+  const docClassList = document.documentElement.classList;
+
+  if (darkMode) docClassList.add('dark');
+  else docClassList.remove('dark');
 
   return (
     <NextUIProvider navigate={navigate}>
       <div className="App container mx-auto p-4 bg-foreground-200">
-        <Header />
+        <Header setDarkMode={setDarkMode} />
         <main>
           <Routes>
             <Route

@@ -6,9 +6,15 @@ import {
   NavbarBrand,
   NavbarContent,
   NavbarItem,
+  Switch,
 } from '@nextui-org/react';
+import { Dispatcher } from 'types';
 
-const Header = () => {
+interface HeaderProps extends React.HTMLAttributes<HTMLElement> {
+  setDarkMode: Dispatcher<boolean>;
+}
+
+const Header = ({ setDarkMode }: HeaderProps) => {
   let location = useLocation();
 
   return (
@@ -19,10 +25,21 @@ const Header = () => {
         </NavbarBrand>
         <NavbarContent className="sm:flex gap-4" justify="center">
           <NavbarItem isActive={location.pathname === '/'}>
-            <Link href={''}>Return Home</Link>
+            <Link href={''}>Home</Link>
           </NavbarItem>
           <NavbarItem isActive={location.pathname === '/scoreboard'}>
             <Link href={'/scoreboard'}>Scoreboard</Link>
+          </NavbarItem>
+        </NavbarContent>
+        <NavbarContent justify="end">
+          <NavbarItem>
+            <Switch
+              onChange={({ currentTarget }) =>
+                setDarkMode(currentTarget.checked)
+              }
+            >
+              Dark Mode
+            </Switch>
           </NavbarItem>
         </NavbarContent>
       </Navbar>
