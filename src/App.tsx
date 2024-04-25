@@ -11,6 +11,7 @@ function App() {
   const [gameMode, setGameMode] = useState<GameModeType>('Box-Office');
   const [gameGenre, setGameGenre] = useState<GameGenreType>('All-Genres');
   const score = useRef<number>(0);
+  document.documentElement.className = 'dark text-foreground bg-background';
 
   return (
     <NextUIProvider navigate={navigate}>
