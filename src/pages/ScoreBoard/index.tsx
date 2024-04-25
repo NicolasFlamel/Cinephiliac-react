@@ -1,5 +1,5 @@
 import './styles.css';
-import { useLocalStorage } from '../../hooks/useLocalStorage';
+import { useLocalStorage } from 'hooks/useLocalStorage';
 
 const ScoreBoard = () => {
   const [scoreBoard] = useLocalStorage('cinephiliacSB');

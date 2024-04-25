@@ -1,6 +1,6 @@
-import { Movie } from '../../types';
 import { useEffect, useState } from 'react';
-import noImg from '../../assets/img/no-image-placeholder.png';
+import noImg from 'assets/img/no-image-placeholder.png';
+import { Movie } from 'types';
 
 const MovieCard = ({ movieData }: { movieData: Movie }) => {
   const [imgLoaded, setImgLoaded] = useState(false);

@@ -1,5 +1,5 @@
-import { ScoreData, Dispatcher } from '../types';
 import { useState, useEffect } from 'react';
+import { ScoreData, Dispatcher } from 'types';
 
 function getStorageValue(key: string, defaultValue: ScoreData[]): ScoreData[] {
   // getting stored value

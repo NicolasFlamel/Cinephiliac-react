@@ -1,13 +1,13 @@
 import './styles.css';
-import { GameProps, Movie } from '../../types';
 import { useEffect, useState } from 'react';
+import { GameProps, Movie } from 'types';
 import { useNavigate } from 'react-router-dom';
-import { Loading, MovieCard } from '../../components';
+import { Loading, MovieCard } from 'components';
 import {
   addMoviesToDB,
   getMovieListFromDB,
   removeMovieFromDB,
-} from '../../utils/MovieDB';
+} from 'utils/MovieDB';
 import { fetchMovieList, fetchMovieStats } from './apiFetch';
 
 const Game = ({ gameMode, gameGenre, score }: GameProps) => {

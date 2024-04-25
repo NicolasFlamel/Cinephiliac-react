@@ -1,7 +1,7 @@
 import './styles.css';
-import { GameProps } from '../../types';
 import { useRef, useState } from 'react';
-import { useLocalStorage } from '../../hooks/useLocalStorage';
+import { GameProps } from 'types';
+import { useLocalStorage } from 'hooks/useLocalStorage';
 
 const GameOver = ({ gameMode, gameGenre, score }: GameProps) => {
   const username = useRef('');

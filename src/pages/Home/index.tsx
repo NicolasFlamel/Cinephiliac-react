@@ -1,6 +1,6 @@
 import './styles.css';
-import { Dispatcher } from '../../types';
 import { useNavigate } from 'react-router';
+import { Dispatcher } from 'types';
 
 interface HomeProps {
   setGameMode: Dispatcher<string>;
