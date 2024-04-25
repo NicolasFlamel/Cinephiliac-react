@@ -27,21 +27,37 @@ const Home = ({ setGameMode, setGameGenre }: HomeProps) => {
     const game = currentTarget.game.value;
     const genre = currentTarget.genre.value;
 
+    if (!game || !genre) return;
+
     setGameMode(game);
     setGameGenre(genre);
     navigate('/game');
   };
 
   return (
-    <form id="game-form" onSubmit={formSubmitHandler}>
-      <Select label="Select a mode" name="game">
+    <form
+      id="game-form"
+      onSubmit={formSubmitHandler}
+      className="flex w-full flex-wrap md:flex-nowrap gap-4"
+    >
+      <Select
+        label="Select a mode"
+        name="game"
+        className="max-w-xs"
+        defaultSelectedKeys={['Box-Office']}
+      >
         {gameModes.map((gameMode) => (
           <SelectItem key={gameMode.value} value={gameMode.value}>
             {gameMode.label}
           </SelectItem>
         ))}
       </Select>
-      <Select label="Select a genre" name="genre" id="bo-genre">
+      <Select
+        label="Select a genre"
+        name="genre"
+        className="max-w-xs"
+        defaultSelectedKeys={['All-Genres']}
+      >
         {genres.map((genre) => (
           <SelectItem key={genre.value} value={genre.value}>
             {genre.label}
