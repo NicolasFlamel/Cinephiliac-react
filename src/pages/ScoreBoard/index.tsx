@@ -1,5 +1,5 @@
 import './styles.css';
-import { ScoreData } from 'types';
+import { GameModeType, ScoreData } from 'types';
 import { useLocalStorage } from 'hooks/useLocalStorage';
 import {
   Table,
@@ -13,6 +13,32 @@ import {
 
 const ScoreBoard = () => {
   const [scoreBoard] = useLocalStorage('cinephiliacSB');
+
+  const boxOfficeScores = scoreBoard.filter(
+    (score) => score.gameMode === 'Box-Office',
+  );
+  const ratingsScores = scoreBoard.filter(
+    (score) => score.gameMode === 'Ratings',
+  );
+
+  return (
+    <section>
+      <section>
+        <h2>Box Office</h2>
+        <ScoreTable mode={'Box-Office'} scores={boxOfficeScores} />
+      </section>
+
+      <section>
+        <h2>Ratings</h2>
+        <ScoreTable mode={'Ratings'} scores={ratingsScores} />
+      </section>
+    </section>
+  );
+};
+
+type ScoreTableProps = { mode: GameModeType; scores: ScoreData[] };
+
+const ScoreTable = ({ mode, scores }: ScoreTableProps) => {
   const columns = [
     { key: 'name', label: 'Name' },
     { key: 'score', label: 'Score' },
@@ -24,54 +50,23 @@ const ScoreBoard = () => {
     score: score.score,
     genre: score.gameGenre,
   });
-  const boxOfficeRows = scoreBoard
-    .filter((score) => score.gameMode === 'Box-Office')
-    .map(createTableRowsObj);
-  const ratingsRows = scoreBoard
-    .filter((score) => score.gameMode === 'Ratings')
-    .map(createTableRowsObj);
+  const rows = scores.map(createTableRowsObj);
 
   return (
-    <section>
-      <section>
-        <h1>Box Office</h1>
-        <Table aria-label="Box Office scores">
-          <TableHeader columns={columns}>
-            {(column) => (
-              <TableColumn key={column.key}>{column.label}</TableColumn>
+    <Table color="default" selectionMode="single" aria-label={mode + ' scores'}>
+      <TableHeader columns={columns}>
+        {(column) => <TableColumn key={column.key}>{column.label}</TableColumn>}
+      </TableHeader>
+      <TableBody items={rows}>
+        {(item) => (
+          <TableRow key={item.key}>
+            {(columnKey) => (
+              <TableCell>{getKeyValue(item, columnKey)}</TableCell>
             )}
-          </TableHeader>
-          <TableBody items={boxOfficeRows}>
-            {(item) => (
-              <TableRow key={item.key}>
-                {(columnKey) => (
-                  <TableCell>{getKeyValue(item, columnKey)}</TableCell>
-                )}
-              </TableRow>
-            )}
-          </TableBody>
-        </Table>
-      </section>
-
-      <section>
-        <Table aria-label="Ratings scores">
-          <TableHeader columns={columns}>
-            {(column) => (
-              <TableColumn key={column.key}>{column.label}</TableColumn>
-            )}
-          </TableHeader>
-          <TableBody items={ratingsRows}>
-            {(item) => (
-              <TableRow key={item.key}>
-                {(columnKey) => (
-                  <TableCell>{getKeyValue(item, columnKey)}</TableCell>
-                )}
-              </TableRow>
-            )}
-          </TableBody>
-        </Table>
-      </section>
-    </section>
+          </TableRow>
+        )}
+      </TableBody>
+    </Table>
   );
 };
 
