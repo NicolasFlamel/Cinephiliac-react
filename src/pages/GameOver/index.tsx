@@ -26,7 +26,7 @@ const GameOver = ({ gameMode, gameGenre, score }: GameProps) => {
   };
 
   return (
-    <div className="game-over-page">
+    <div>
       <section id="score">
         {/* display results */}
         <h2>You're score was: {score.current}</h2>
@@ -38,21 +38,15 @@ const GameOver = ({ gameMode, gameGenre, score }: GameProps) => {
       <section id="user-info">
         {/* user inputs info for scoreboard */}
         <h2>Enter Player Name:</h2>
-        <form className="user-form" onSubmit={handleSubmit}>
+        <form onSubmit={handleSubmit}>
           <input
-            className="username-input"
             type="text"
             placeholder="Name"
             name="username"
             onChange={(e) => (username.current = e.target.value)}
             disabled={saved}
           />
-          <Button
-            type="submit"
-            id="save-btn"
-            className="custom-btn"
-            disabled={saved}
-          >
+          <Button type="submit" id="save-btn" disabled={saved}>
             Save
           </Button>
         </form>

@@ -29,7 +29,7 @@ const MovieCard = ({ movieData }: { movieData: Movie }) => {
           <span>Loading</span>
         )}
       </div>
-      <h2 className="movie-name">{movieData.title}</h2>
+      <h2>{movieData.title}</h2>
     </>
   );
 };

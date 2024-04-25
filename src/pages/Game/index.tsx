@@ -208,16 +208,15 @@ const Game = ({ gameMode, gameGenre, score }: GameProps) => {
     <section id="game-section">
       <section id="question">
         <h2>
-          Does <em className="movie-name">{comparedMovies[1].title}</em> have a
-          higher or lower {gameMode} amount than{' '}
-          <em className="movie-name">{comparedMovies[0].title}</em>?
+          Does <em>{comparedMovies[1].title}</em> have a higher or lower{' '}
+          {gameMode} amount than <em>{comparedMovies[0].title}</em>?
         </h2>
       </section>
 
-      <section className="game">
+      <section>
         {comparedMovies.map((movie, index) => {
           return (
-            <article key={movie.imdbId} className="movie-card">
+            <article key={movie.imdbId}>
               <h2>
                 {gameMode +
                   ': ' +
@@ -232,22 +231,20 @@ const Game = ({ gameMode, gameGenre, score }: GameProps) => {
           );
         })}
         <section id="higher-lower-btns">
-          <div className="buttons">
+          <div>
             <Button
               type="button"
-              className="custom-btn"
               disabled={isLoading}
               onClick={() => handleAnswerClick('>')}
             >
               Higher
             </Button>
 
-            <div className="or"></div>
+            <div></div>
 
             <Button
               type="button"
               value="<"
-              className="custom-btn"
               disabled={isLoading}
               onClick={() => handleAnswerClick('<')}
             >

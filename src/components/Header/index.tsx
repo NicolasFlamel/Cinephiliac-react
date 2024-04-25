@@ -4,11 +4,7 @@ import { Link } from '@nextui-org/react';
 
 const Header = () => {
   let location = useLocation();
-  const returnBtn = (
-    <Link href={''} className="custom-btn">
-      Return Home
-    </Link>
-  );
+  const returnBtn = <Link href={''}>Return Home</Link>;
 
   switch (location.pathname) {
     case '/':
@@ -24,13 +20,11 @@ const Header = () => {
       return <h1>Error</h1>;
   }
   return (
-    <header className="App-header">
+    <header>
       <h1>Cinephiliac</h1>
-      <nav className="nav-btns">
+      <nav>
         {location.pathname !== '/' ? returnBtn : null}
-        <Link href={'/score-board'} className="custom-btn">
-          Score board
-        </Link>
+        <Link href={'/score-board'}>Score board</Link>
       </nav>
     </header>
   );

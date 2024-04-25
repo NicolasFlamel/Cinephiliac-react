@@ -2,8 +2,8 @@ import './styles.css';
 
 const Loading = () => {
   return (
-    <section className="loading">
-      <div className="loader">
+    <section>
+      <div>
         <h2>Loading</h2>
         <span style={{ '--i': 1 } as React.CSSProperties}></span>
         <span style={{ '--i': 2 } as React.CSSProperties}></span>

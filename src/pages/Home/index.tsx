@@ -34,19 +34,14 @@ const Home = ({ setGameMode, setGameGenre }: HomeProps) => {
 
   return (
     <form id="game-form" onSubmit={formSubmitHandler}>
-      <Select label="Select a mode" name="game" className="custom-btn">
+      <Select label="Select a mode" name="game">
         {gameModes.map((gameMode) => (
           <SelectItem key={gameMode.value} value={gameMode.value}>
             {gameMode.label}
           </SelectItem>
         ))}
       </Select>
-      <Select
-        label="Select a genre"
-        name="genre"
-        id="bo-genre"
-        className="custom-btn"
-      >
+      <Select label="Select a genre" name="genre" id="bo-genre">
         {genres.map((genre) => (
           <SelectItem key={genre.value} value={genre.value}>
             {genre.label}

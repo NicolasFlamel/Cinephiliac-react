@@ -1,13 +1,21 @@
 import './styles.css';
 import { useLocalStorage } from 'hooks/useLocalStorage';
+import {
+  Table,
+  TableHeader,
+  TableColumn,
+  TableBody,
+  TableRow,
+  TableCell,
+} from '@nextui-org/react';
 
 const ScoreBoard = () => {
   const [scoreBoard] = useLocalStorage('cinephiliacSB');
 
   return (
-    <section id="scores" className="">
+    <section id="scores">
       {/* <!-- Box office table --> */}
-      <table id="box-office-table" className="score-table">
+      <table id="box-office-table">
         <thead>
           <tr>
             <th colSpan={3}>
@@ -16,7 +24,7 @@ const ScoreBoard = () => {
           </tr>
         </thead>
         <tbody>
-          <tr className="table-legend">
+          <tr>
             <td>Name</td>
             <td>Score</td>
             <td>Genre</td>
@@ -26,7 +34,7 @@ const ScoreBoard = () => {
             .sort((a, b) => b.score - a.score)
             .map((scoreData) => {
               return (
-                <tr key={scoreData.id} className="score-data">
+                <tr key={scoreData.id}>
                   <td>{scoreData.username}</td>
                   <td>{scoreData.score}</td>
                   <td>{scoreData.gameGenre}</td>
@@ -37,7 +45,7 @@ const ScoreBoard = () => {
       </table>
       {/* <!-- End of box office table --> */}
       {/* <!-- Ratings table --> */}
-      <table id="ratings-table" className="score-table">
+      <table id="ratings-table">
         <thead>
           <tr>
             <th colSpan={3}>
@@ -46,7 +54,7 @@ const ScoreBoard = () => {
           </tr>
         </thead>
         <tbody>
-          <tr className="table-legend">
+          <tr>
             <td>Name</td>
             <td>Score</td>
             <td>Filters</td>
@@ -56,7 +64,7 @@ const ScoreBoard = () => {
             .sort((a, b) => b.score - a.score)
             .map((scoreData) => {
               return (
-                <tr key={scoreData.id} className="score-data">
+                <tr key={scoreData.id}>
                   <td>{scoreData.username}</td>
                   <td>{scoreData.score}</td>
                   <td>{scoreData.gameGenre}</td>
