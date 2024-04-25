@@ -1,4 +1,5 @@
 import './styles.css';
+import { ScoreData } from 'types';
 import { useLocalStorage } from 'hooks/useLocalStorage';
 import {
   Table,
@@ -7,73 +8,69 @@ import {
   TableBody,
   TableRow,
   TableCell,
+  getKeyValue,
 } from '@nextui-org/react';
 
 const ScoreBoard = () => {
   const [scoreBoard] = useLocalStorage('cinephiliacSB');
+  const columns = [
+    { key: 'name', label: 'Name' },
+    { key: 'score', label: 'Score' },
+    { key: 'genre', label: 'Genre' },
+  ];
+  const createTableRowsObj = (score: ScoreData) => ({
+    key: score.id,
+    name: score.username,
+    score: score.score,
+    genre: score.gameGenre,
+  });
+  const boxOfficeRows = scoreBoard
+    .filter((score) => score.gameMode === 'Box-Office')
+    .map(createTableRowsObj);
+  const ratingsRows = scoreBoard
+    .filter((score) => score.gameMode === 'Ratings')
+    .map(createTableRowsObj);
 
   return (
-    <section id="scores">
-      {/* <!-- Box office table --> */}
-      <table id="box-office-table">
-        <thead>
-          <tr>
-            <th colSpan={3}>
-              <h2>💲Box Office💲</h2>
-            </th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td>Name</td>
-            <td>Score</td>
-            <td>Genre</td>
-          </tr>
-          {scoreBoard
-            .filter((scoreData) => scoreData.gameMode === 'Box-Office')
-            .sort((a, b) => b.score - a.score)
-            .map((scoreData) => {
-              return (
-                <tr key={scoreData.id}>
-                  <td>{scoreData.username}</td>
-                  <td>{scoreData.score}</td>
-                  <td>{scoreData.gameGenre}</td>
-                </tr>
-              );
-            })}
-        </tbody>
-      </table>
-      {/* <!-- End of box office table --> */}
-      {/* <!-- Ratings table --> */}
-      <table id="ratings-table">
-        <thead>
-          <tr>
-            <th colSpan={3}>
-              <h2>⭐Ratings⭐</h2>
-            </th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td>Name</td>
-            <td>Score</td>
-            <td>Filters</td>
-          </tr>
-          {scoreBoard
-            .filter((scoreData) => scoreData.gameMode === 'Ratings')
-            .sort((a, b) => b.score - a.score)
-            .map((scoreData) => {
-              return (
-                <tr key={scoreData.id}>
-                  <td>{scoreData.username}</td>
-                  <td>{scoreData.score}</td>
-                  <td>{scoreData.gameGenre}</td>
-                </tr>
-              );
-            })}
-        </tbody>
-      </table>
-      {/* <!-- End of ratings table --> */}
+    <section>
+      <section>
+        <h1>Box Office</h1>
+        <Table aria-label="Box Office scores">
+          <TableHeader columns={columns}>
+            {(column) => (
+              <TableColumn key={column.key}>{column.label}</TableColumn>
+            )}
+          </TableHeader>
+          <TableBody items={boxOfficeRows}>
+            {(item) => (
+              <TableRow key={item.key}>
+                {(columnKey) => (
+                  <TableCell>{getKeyValue(item, columnKey)}</TableCell>
+                )}
+              </TableRow>
+            )}
+          </TableBody>
+        </Table>
+      </section>
+
+      <section>
+        <Table aria-label="Ratings scores">
+          <TableHeader columns={columns}>
+            {(column) => (
+              <TableColumn key={column.key}>{column.label}</TableColumn>
+            )}
+          </TableHeader>
+          <TableBody items={ratingsRows}>
+            {(item) => (
+              <TableRow key={item.key}>
+                {(columnKey) => (
+                  <TableCell>{getKeyValue(item, columnKey)}</TableCell>
+                )}
+              </TableRow>
+            )}
+          </TableBody>
+        </Table>
+      </section>
     </section>
   );
 };
