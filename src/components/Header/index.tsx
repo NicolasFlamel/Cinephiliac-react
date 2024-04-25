@@ -1,10 +1,11 @@
 import './styles.css';
-import { Link, useLocation } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
+import { Link } from '@nextui-org/react';
 
 const Header = () => {
   let location = useLocation();
   const returnBtn = (
-    <Link to={''} className="custom-btn">
+    <Link href={''} className="custom-btn">
       Return Home
     </Link>
   );
@@ -27,7 +28,7 @@ const Header = () => {
       <h1>Cinephiliac</h1>
       <nav className="nav-btns">
         {location.pathname !== '/' ? returnBtn : null}
-        <Link to={'/score-board'} className="custom-btn">
+        <Link href={'/score-board'} className="custom-btn">
           Score board
         </Link>
       </nav>
