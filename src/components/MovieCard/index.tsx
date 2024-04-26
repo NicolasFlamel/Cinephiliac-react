@@ -1,5 +1,5 @@
 import { GameModeType, Movie } from 'types';
-import { Divider, Image } from '@nextui-org/react';
+import { Image } from '@nextui-org/react';
 import noImg from 'assets/img/no-image-placeholder.png';
 
 interface MovieCardProps {

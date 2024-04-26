@@ -30,6 +30,7 @@ const Header = ({ darkMode, setDarkMode }: HeaderProps) => {
       className="mb-4"
       isMenuOpen={isMenuOpen}
       onMenuOpenChange={setIsMenuOpen}
+      shouldHideOnScroll
     >
       <NavbarContent>
         <NavbarMenuToggle

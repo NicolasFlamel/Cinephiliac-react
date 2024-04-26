@@ -6,7 +6,6 @@ import {
   Card,
   CardHeader,
   CardBody,
-  CardFooter,
   Select,
   SelectItem,
 } from '@nextui-org/react';
