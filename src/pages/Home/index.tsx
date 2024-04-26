@@ -38,7 +38,7 @@ const Home = ({ setGameMode, setGameGenre }: HomeProps) => {
     <form
       id="game-form"
       onSubmit={formSubmitHandler}
-      className="flex w-full flex-wrap md:flex-nowrap gap-4"
+      className="flex w-full flex-wrap md:flex-nowrap gap-4 justify-center items-center"
     >
       <Select
         label="Select a mode"
