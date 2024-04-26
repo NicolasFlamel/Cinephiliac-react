@@ -207,7 +207,13 @@ const Game = ({ gameMode, gameGenre, score }: GameProps) => {
   };
 
   // conditional rendering
-  if (movieList.length === 1) return <h2>Out of Movies!</h2>;
+  if (movieList.length === 1)
+    return (
+      <section>
+        <h2>Out of Movies!</h2>
+        <Button onClick={() => navigate('/game-over')}>Click here</Button>
+      </section>
+    );
   else if (movieList.length === 0) return <Loading />;
   else if (comparedMovies.length === 0) return <Loading />;
 
@@ -234,14 +240,14 @@ const Game = ({ gameMode, gameGenre, score }: GameProps) => {
         <CardFooter className="flex flex-wrap justify-center gap-4">
           <Button
             color="danger"
-            disabled={isLoading}
+            isDisabled={isLoading}
             onClick={() => handleAnswerClick('>')}
           >
             Higher
           </Button>
           <Button
             color="primary"
-            disabled={isLoading}
+            isDisabled={isLoading}
             onClick={() => handleAnswerClick('<')}
           >
             Lower
