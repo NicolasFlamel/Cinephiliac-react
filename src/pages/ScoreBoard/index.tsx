@@ -1,4 +1,3 @@
-import './styles.css';
 import { GameModeType, ScoreData } from 'types';
 import { useLocalStorage } from 'hooks/useLocalStorage';
 import {

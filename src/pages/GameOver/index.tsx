@@ -1,4 +1,3 @@
-import './styles.css';
 import { useRef, useState } from 'react';
 import { GameProps } from 'types';
 import { useLocalStorage } from 'hooks/useLocalStorage';

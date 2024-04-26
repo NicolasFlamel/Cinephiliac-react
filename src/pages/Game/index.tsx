@@ -1,4 +1,3 @@
-import './styles.css';
 import { useEffect, useState } from 'react';
 import { GameProps, Movie } from 'types';
 import { useNavigate } from 'react-router-dom';

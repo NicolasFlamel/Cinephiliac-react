@@ -1,4 +1,3 @@
-import './styles.css';
 import { useNavigate } from 'react-router';
 import { Dispatcher, GameGenreType, GameModeType } from 'types';
 import {
