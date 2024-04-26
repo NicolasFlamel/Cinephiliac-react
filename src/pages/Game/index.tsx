@@ -213,8 +213,10 @@ const Game = ({ gameMode, gameGenre, score }: GameProps) => {
         <Button onClick={() => navigate('/game-over')}>Click here</Button>
       </section>
     );
-  else if (movieList.length === 0) return <Loading />;
-  else if (comparedMovies.length === 0) return <Loading />;
+  else if (movieList.length === 0 && isLoading)
+    return <Loading>Fetching Movies</Loading>;
+  else if (comparedMovies.length === 0 && isLoading)
+    return <Loading>Setting up movies to compare</Loading>;
 
   return (
     <section className="flex justify-center">
