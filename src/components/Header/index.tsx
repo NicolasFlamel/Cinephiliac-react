@@ -21,11 +21,11 @@ const Header = ({ setDarkMode }: HeaderProps) => {
 
   return (
     <header className="mb-4">
-      <Navbar>
+      <Navbar className="py-4">
         <NavbarBrand>
           <h1 className="font-bold text-inherit">Cinephiliac</h1>
         </NavbarBrand>
-        <NavbarContent className="sm:flex gap-4" justify="center">
+        <NavbarContent className="sm:flex gap-4 flex-wrap" justify="center">
           <NavbarItem isActive={location.pathname === '/'}>
             <Link href={''}>Home</Link>
           </NavbarItem>
