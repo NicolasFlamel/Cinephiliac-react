@@ -17,10 +17,11 @@ import {
 } from '@nextui-org/react';
 
 interface HeaderProps extends React.HTMLAttributes<HTMLElement> {
+  darkMode: boolean;
   setDarkMode: Dispatcher<boolean>;
 }
 
-const Header = ({ setDarkMode }: HeaderProps) => {
+const Header = ({ darkMode, setDarkMode }: HeaderProps) => {
   let location = useLocation();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
@@ -55,6 +56,7 @@ const Header = ({ setDarkMode }: HeaderProps) => {
         <NavbarItem className="flex flex-wrap">
           <Switch
             size="lg"
+            isSelected={darkMode}
             startContent={<Sun fill="yellow" />}
             endContent={<Moon fill="black" />}
             onChange={({ currentTarget }) => setDarkMode(currentTarget.checked)}
@@ -81,6 +83,7 @@ const Header = ({ setDarkMode }: HeaderProps) => {
         <NavbarMenuItem>
           <Switch
             size="lg"
+            isSelected={darkMode}
             startContent={<Sun fill="yellow" />}
             endContent={<Moon fill="black" />}
             onChange={({ currentTarget }) => setDarkMode(currentTarget.checked)}
