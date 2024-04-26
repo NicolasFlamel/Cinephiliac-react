@@ -205,53 +205,39 @@ const Game = ({ gameMode, gameGenre, score }: GameProps) => {
   else if (comparedMovies.length === 0) return <Loading />;
 
   return (
-    <section id="game-section">
-      <section id="question">
-        <h2>
+    <section className="grid justify-center gap-4">
+      <section className="row-start-1">
+        <h2 className="text-center">
           Does <em>{comparedMovies[1].title}</em> have a higher or lower{' '}
           {gameMode} amount than <em>{comparedMovies[0].title}</em>?
         </h2>
       </section>
+      <section className="grid grid-cols-2 justify-center gap-4">
+        {comparedMovies.map((movie, index) => (
+          <MovieCard
+            key={movie.imdbId}
+            movieData={movie}
+            showStat={index === 0}
+            gameMode={gameMode}
+          />
+        ))}
+      </section>
+      <section className="flex flex-wrap justify-center gap-4">
+        <Button
+          disabled={isLoading}
+          onClick={() => handleAnswerClick('>')}
+        >
+          Higher
+        </Button>
 
-      <section>
-        {comparedMovies.map((movie, index) => {
-          return (
-            <article key={movie.imdbId}>
-              <h2>
-                {gameMode +
-                  ': ' +
-                  (index === 0
-                    ? gameMode === 'Box-Office'
-                      ? movie.boxOffice
-                      : movie.rating || 'Loading'
-                    : '???')}
-              </h2>
-              <MovieCard movieData={movie} />
-            </article>
-          );
-        })}
-        <section id="higher-lower-btns">
-          <div>
-            <Button
-              type="button"
-              disabled={isLoading}
-              onClick={() => handleAnswerClick('>')}
-            >
-              Higher
-            </Button>
+        <div></div>
 
-            <div></div>
-
-            <Button
-              type="button"
-              value="<"
-              disabled={isLoading}
-              onClick={() => handleAnswerClick('<')}
-            >
-              Lower
-            </Button>
-          </div>
-        </section>
+        <Button
+          disabled={isLoading}
+          onClick={() => handleAnswerClick('<')}
+        >
+          Lower
+        </Button>
       </section>
     </section>
   );
