@@ -9,7 +9,14 @@ import {
   removeMovieFromDB,
 } from 'utils/MovieDB';
 import { fetchMovieList, fetchMovieStats } from './apiFetch';
-import { Button } from '@nextui-org/react';
+import {
+  Button,
+  Card,
+  CardBody,
+  CardFooter,
+  CardHeader,
+  Divider,
+} from '@nextui-org/react';
 
 const Game = ({ gameMode, gameGenre, score }: GameProps) => {
   const [movieList, setMovieList] = useState<Array<Movie>>([]);
@@ -205,40 +212,42 @@ const Game = ({ gameMode, gameGenre, score }: GameProps) => {
   else if (comparedMovies.length === 0) return <Loading />;
 
   return (
-    <section className="grid justify-center gap-4">
-      <section className="row-start-1">
-        <h2 className="text-center">
-          Does <em>{comparedMovies[1].title}</em> have a higher or lower{' '}
-          {gameMode} amount than <em>{comparedMovies[0].title}</em>?
-        </h2>
-      </section>
-      <section className="grid grid-cols-2 justify-center gap-4">
-        {comparedMovies.map((movie, index) => (
-          <MovieCard
-            key={movie.imdbId}
-            movieData={movie}
-            showStat={index === 0}
-            gameMode={gameMode}
-          />
-        ))}
-      </section>
-      <section className="flex flex-wrap justify-center gap-4">
-        <Button
-          disabled={isLoading}
-          onClick={() => handleAnswerClick('>')}
-        >
-          Higher
-        </Button>
-
-        <div></div>
-
-        <Button
-          disabled={isLoading}
-          onClick={() => handleAnswerClick('<')}
-        >
-          Lower
-        </Button>
-      </section>
+    <section className="flex justify-center">
+      <Card className="grid justify-center gap-4 p-4">
+        <CardHeader className="row-start-1 justify-center">
+          <h2 className="text-center max-w-max">
+            Does <em>{comparedMovies[1].title}</em> have a higher or lower{' '}
+            {gameMode} amount than <em>{comparedMovies[0].title}</em>?
+          </h2>
+        </CardHeader>
+        <Divider />
+        <CardBody className="grid md:gap-4 md:grid-cols-2 md:divide-y-0 divide-y-large justify-center p-4">
+          {comparedMovies.map((movie, index) => (
+            <MovieCard
+              key={movie.imdbId}
+              movieData={movie}
+              showStat={index === 0}
+              gameMode={gameMode}
+            />
+          ))}
+        </CardBody>
+        <CardFooter className="flex flex-wrap justify-center gap-4">
+          <Button
+            color="danger"
+            disabled={isLoading}
+            onClick={() => handleAnswerClick('>')}
+          >
+            Higher
+          </Button>
+          <Button
+            color="primary"
+            disabled={isLoading}
+            onClick={() => handleAnswerClick('<')}
+          >
+            Lower
+          </Button>
+        </CardFooter>
+      </Card>
     </section>
   );
 };

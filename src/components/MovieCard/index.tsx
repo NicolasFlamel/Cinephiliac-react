@@ -1,5 +1,5 @@
 import { GameModeType, Movie } from 'types';
-import { Image } from '@nextui-org/react';
+import { Divider, Image } from '@nextui-org/react';
 import noImg from 'assets/img/no-image-placeholder.png';
 
 interface MovieCardProps {
@@ -12,7 +12,7 @@ const MovieCard = ({ movieData, gameMode, showStat }: MovieCardProps) => {
   return (
     <article
       key={movieData.imdbId}
-      className="grid grid-row grid-rows-[auto max-content auto] grid-cols-subgrid text-center justify-items-center"
+      className="grid grid-row grid-rows-[auto max-content auto] grid-cols-subgrid text-center justify-items-center gap-4 py-4"
     >
       <h2 className="row-start-1">
         {gameMode +
