@@ -1,12 +1,19 @@
-import { useRef, useState } from 'react';
+import { useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { GameProps } from 'types';
-import { useLocalStorage } from 'hooks/useLocalStorage';
-import { Button } from '@nextui-org/react';
+import {
+  Button,
+  Card,
+  CardBody,
+  CardHeader,
+  Divider,
+  Input,
+} from '@nextui-org/react';
+import { addScore } from 'helpers/localScoreboard';
 
 const GameOver = ({ gameMode, gameGenre, score }: GameProps) => {
   const username = useRef('');
-  const [saved, setSaved] = useState(false);
-  const [scoreBoard, setScoreBoard] = useLocalStorage('cinephiliacSB');
+  const navigate = useNavigate();
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -20,8 +27,8 @@ const GameOver = ({ gameMode, gameGenre, score }: GameProps) => {
       username: username.current,
     };
 
-    setScoreBoard(scoreBoard.concat([userScore]));
-    setSaved(true);
+    addScore(userScore);
+    navigate('/scoreboard');
   };
 
   return (

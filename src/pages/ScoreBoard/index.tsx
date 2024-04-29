@@ -1,5 +1,4 @@
 import { GameModeType, ScoreData } from 'types';
-import { useLocalStorage } from 'hooks/useLocalStorage';
 import {
   Table,
   TableHeader,
@@ -9,14 +8,15 @@ import {
   TableCell,
   getKeyValue,
 } from '@nextui-org/react';
+import { getScores } from 'helpers/localScoreboard';
 
 const ScoreBoard = () => {
-  const [scoreBoard] = useLocalStorage('cinephiliacSB');
+  const scoreboard = getScores();
 
-  const boxOfficeScores = scoreBoard.filter(
+  const boxOfficeScores = scoreboard.filter(
     (score) => score.gameMode === 'Box-Office',
   );
-  const ratingsScores = scoreBoard.filter(
+  const ratingsScores = scoreboard.filter(
     (score) => score.gameMode === 'Ratings',
   );
 
