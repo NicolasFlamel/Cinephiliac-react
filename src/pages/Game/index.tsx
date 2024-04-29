@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react';
 import { GameProps, Movie } from 'types';
-import { useNavigate } from 'react-router-dom';
 import { Loading, MovieCard } from 'components';
 import {
   addMoviesToDB,
@@ -16,12 +15,13 @@ import {
   CardHeader,
   Divider,
 } from '@nextui-org/react';
+import GameOver from 'pages/GameOver';
 
 const Game = ({ gameMode, gameGenre, score }: GameProps) => {
   const [movieList, setMovieList] = useState<Array<Movie>>([]);
   const [comparedMovies, setComparedMovies] = useState<Movie[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const navigate = useNavigate();
+  const [gameIsOver, setGameIsOver] = useState(false);
 
   // on mount getMovieList
   useEffect(() => {
@@ -199,24 +199,26 @@ const Game = ({ gameMode, gameGenre, score }: GameProps) => {
 
     const correct = compareMovies(userInput);
 
-    if (!correct) return navigate('/game-over');
+    if (!correct) return setGameIsOver(true);
 
     score.current++;
     nextMovie();
   };
 
   // conditional rendering
-  if (movieList.length === 1)
-    return (
-      <section>
-        <h2>Out of Movies!</h2>
-        <Button onClick={() => navigate('/game-over')}>Click here</Button>
-      </section>
-    );
+  if (gameIsOver)
+    return <GameOver gameMode={gameMode} gameGenre={gameGenre} score={score} />;
   else if (movieList.length === 0 && isLoading)
     return <Loading>Fetching Movies</Loading>;
   else if (comparedMovies.length === 0 && isLoading)
     return <Loading>Setting up movies to compare</Loading>;
+  else if (movieList.length === 1)
+    return (
+      <section>
+        <h2>Out of Movies!</h2>
+        <Button onClick={() => setGameIsOver(true)}>Click here</Button>
+      </section>
+    );
 
   return (
     <section className="flex justify-center">
