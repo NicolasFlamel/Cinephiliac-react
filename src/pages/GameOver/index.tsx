@@ -1,12 +1,19 @@
-import './styles.css';
-import { GameProps } from '../../types';
-import { useRef, useState } from 'react';
-import { useLocalStorage } from '../../hooks/useLocalStorage';
+import { useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { GameProps } from 'types';
+import {
+  Button,
+  Card,
+  CardBody,
+  CardHeader,
+  Divider,
+  Input,
+} from '@nextui-org/react';
+import { addScore } from 'helpers/localScoreboard';
 
 const GameOver = ({ gameMode, gameGenre, score }: GameProps) => {
   const username = useRef('');
-  const [saved, setSaved] = useState(false);
-  const [scoreBoard, setScoreBoard] = useLocalStorage('cinephiliacSB');
+  const navigate = useNavigate();
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -20,43 +27,48 @@ const GameOver = ({ gameMode, gameGenre, score }: GameProps) => {
       username: username.current,
     };
 
-    setScoreBoard(scoreBoard.concat([userScore]));
-    setSaved(true);
+    addScore(userScore);
+    navigate('/scoreboard');
   };
 
   return (
-    <div className="game-over-page">
-      <section id="score">
-        {/* display results */}
-        <h2>You're score was: {score.current}</h2>
-        <h3>
-          Game mode: {gameMode === 'Box-Office' ? 'Box Office' : 'Ratings'}
-        </h3>
-        <h3>Genre: {gameGenre === 'All-Genres' ? 'All Genres' : gameGenre}</h3>
-      </section>
-      <section id="user-info">
-        {/* user inputs info for scoreboard */}
-        <h2>Enter Player Name:</h2>
-        <form className="user-form" onSubmit={handleSubmit}>
-          <input
-            className="username-input"
-            type="text"
-            placeholder="Name"
-            name="username"
-            onChange={(e) => (username.current = e.target.value)}
-            disabled={saved}
-          />
-          <button
-            type="submit"
-            id="save-btn"
-            className="custom-btn"
-            disabled={saved}
-          >
-            Save
-          </button>
-        </form>
-      </section>
-    </div>
+    <section className="flex justify-center">
+      <Card className="inline-block justify-center gap-4">
+        <CardHeader>
+          <p>Game over!</p>
+        </CardHeader>
+        <Divider />
+        <CardBody id="score" className="grid gap-4">
+          {/* display results */}
+          <section>
+            <p>You're score was: {score.current}</p>
+            <p>
+              Game mode: {gameMode === 'Box-Office' ? 'Box Office' : 'Ratings'}
+            </p>
+            <p>
+              Genre: {gameGenre === 'All-Genres' ? 'All Genres' : gameGenre}
+            </p>
+          </section>
+          <section id="user-info">
+            {/* user inputs info for scoreboard */}
+            <form
+              onSubmit={handleSubmit}
+              className="flex w-full flex-wrap md:flex-nowrap gap-4"
+            >
+              <Input
+                type="text"
+                label="Username"
+                name="username"
+                onChange={(e) => (username.current = e.target.value)}
+              />
+              <Button className="m-auto" type="submit" id="save-btn">
+                Submit
+              </Button>
+            </form>
+          </section>
+        </CardBody>
+      </Card>
+    </section>
   );
 };
 

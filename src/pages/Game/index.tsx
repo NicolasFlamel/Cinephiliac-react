@@ -1,20 +1,27 @@
-import './styles.css';
-import { GameProps, Movie } from '../../types';
 import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { Loading, MovieCard } from '../../components';
+import { GameProps, Movie } from 'types';
+import { Loading, MovieCard } from 'components';
 import {
   addMoviesToDB,
   getMovieListFromDB,
   removeMovieFromDB,
-} from '../../utils/MovieDB';
+} from 'utils/MovieDB';
 import { fetchMovieList, fetchMovieStats } from './apiFetch';
+import {
+  Button,
+  Card,
+  CardBody,
+  CardFooter,
+  CardHeader,
+  Divider,
+} from '@nextui-org/react';
+import GameOver from 'pages/GameOver';
 
 const Game = ({ gameMode, gameGenre, score }: GameProps) => {
   const [movieList, setMovieList] = useState<Array<Movie>>([]);
   const [comparedMovies, setComparedMovies] = useState<Movie[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const navigate = useNavigate();
+  const [gameIsOver, setGameIsOver] = useState(false);
 
   // on mount getMovieList
   useEffect(() => {
@@ -127,9 +134,6 @@ const Game = ({ gameMode, gameGenre, score }: GameProps) => {
   const nextMovie = () => {
     const randomMovieIndex = Math.floor(Math.random() * (movieList.length - 1));
 
-    // if we run out of movies
-    if (movieList.length === 1) return;
-
     // moves second movie to first and set new second movie
     setComparedMovies((prevState) => [
       { ...prevState[1] },
@@ -192,69 +196,57 @@ const Game = ({ gameMode, gameGenre, score }: GameProps) => {
 
     const correct = compareMovies(userInput);
 
-    if (!correct) return navigate('/game-over');
+    if (!correct) return setGameIsOver(true);
 
     score.current++;
-    nextMovie();
+    movieList.length === 0 ? setGameIsOver(true) : nextMovie();
   };
 
   // conditional rendering
-  if (movieList.length === 1) return <h2>Out of Movies!</h2>;
-  else if (movieList.length === 0) return <Loading />;
-  else if (comparedMovies.length === 0) return <Loading />;
+  if (gameIsOver)
+    return <GameOver gameMode={gameMode} gameGenre={gameGenre} score={score} />;
+  else if (movieList.length === 0 && isLoading)
+    return <Loading>Fetching Movies</Loading>;
+  else if (comparedMovies.length === 0 && isLoading)
+    return <Loading>Setting up movies to compare</Loading>;
 
   return (
-    <section id="game-section">
-      <section id="question">
-        <h2>
-          Does <em className="movie-name">{comparedMovies[1].title}</em> have a
-          higher or lower {gameMode} amount than{' '}
-          <em className="movie-name">{comparedMovies[0].title}</em>?
-        </h2>
-      </section>
-
-      <section className="game">
-        {comparedMovies.map((movie, index) => {
-          return (
-            <article key={movie.imdbId} className="movie-card">
-              <h2>
-                {gameMode +
-                  ': ' +
-                  (index === 0
-                    ? gameMode === 'Box-Office'
-                      ? movie.boxOffice
-                      : movie.rating || 'Loading'
-                    : '???')}
-              </h2>
-              <MovieCard movieData={movie} />
-            </article>
-          );
-        })}
-        <section id="higher-lower-btns">
-          <div className="buttons">
-            <button
-              type="button"
-              className="custom-btn"
-              disabled={isLoading}
-              onClick={() => handleAnswerClick('>')}
-            >
-              Higher
-            </button>
-
-            <div className="or"></div>
-
-            <button
-              type="button"
-              value="<"
-              className="custom-btn"
-              disabled={isLoading}
-              onClick={() => handleAnswerClick('<')}
-            >
-              Lower
-            </button>
-          </div>
-        </section>
-      </section>
+    <section className="flex justify-center">
+      <Card className="grid justify-center gap-4 p-4">
+        <CardHeader className="row-start-1 justify-center">
+          <h2 className="text-center max-w-max">
+            Does <em>{comparedMovies[1].title}</em> have a higher or lower{' '}
+            {gameMode} amount than <em>{comparedMovies[0].title}</em>?
+          </h2>
+        </CardHeader>
+        <Divider />
+        <CardBody className="grid md:gap-4 md:grid-cols-2 md:divide-y-0 divide-y-large justify-center p-4">
+          {comparedMovies.map((movie, index) => (
+            <MovieCard
+              key={movie.imdbId}
+              movieData={movie}
+              showStat={index === 0}
+              gameMode={gameMode}
+            />
+          ))}
+        </CardBody>
+        <CardFooter className="flex flex-wrap justify-center gap-4">
+          <Button
+            color="danger"
+            isDisabled={isLoading}
+            onClick={() => handleAnswerClick('>')}
+          >
+            Higher
+          </Button>
+          <Button
+            color="primary"
+            isDisabled={isLoading}
+            onClick={() => handleAnswerClick('<')}
+          >
+            Lower
+          </Button>
+        </CardFooter>
+      </Card>
     </section>
   );
 };

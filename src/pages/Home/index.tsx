@@ -1,23 +1,39 @@
-import './styles.css';
-import { Dispatcher } from '../../types';
 import { useNavigate } from 'react-router';
+import { Dispatcher, GameGenreType, GameModeType } from 'types';
+import {
+  Button,
+  Card,
+  CardHeader,
+  CardBody,
+  Select,
+  SelectItem,
+} from '@nextui-org/react';
+import { genres, gameModes } from './data';
 
 interface HomeProps {
-  setGameMode: Dispatcher<string>;
-  setGameGenre: Dispatcher<string>;
+  setGameMode: Dispatcher<GameModeType>;
+  setGameGenre: Dispatcher<GameGenreType>;
+}
+
+interface FormElements extends HTMLFormControlsCollection {
+  game: HTMLInputElement;
+  genre: HTMLInputElement;
+}
+
+interface YourFormElement extends HTMLFormElement {
+  readonly elements: FormElements;
 }
 
 const Home = ({ setGameMode, setGameGenre }: HomeProps) => {
   const navigate = useNavigate();
 
-  const formSubmitHandler = (e: React.FormEvent) => {
+  const formSubmitHandler = (e: React.FormEvent<YourFormElement>) => {
     e.preventDefault();
-    const target = e.target as typeof e.target & {
-      game: { value: string };
-      genre: { value: string };
-    };
-    const game = target.game.value;
-    const genre = target.genre.value;
+    const { currentTarget } = e;
+    const game = currentTarget.game.value;
+    const genre = currentTarget.genre.value;
+
+    if (!game || !genre) return;
 
     setGameMode(game);
     setGameGenre(genre);
@@ -25,27 +41,59 @@ const Home = ({ setGameMode, setGameGenre }: HomeProps) => {
   };
 
   return (
-    <form id="game-form" onSubmit={formSubmitHandler}>
-      <select name="game" className="custom-btn">
-        <option value="Box-Office">Box Office Mode</option>
-        <option value="Ratings">Ratings Mode</option>
-      </select>
-      <select name="genre" id="bo-genre" className="custom-btn">
-        <option value="All-Genres">All Genre</option>
-        <option value="Action">Action</option>
-        <option value="Animation">Animation</option>
-        <option value="Comedy">Comedy</option>
-        <option value="Crime">Crime</option>
-        <option value="Family">Family</option>
-        <option value="Horror">Horror</option>
-        <option value="Romance">Romance</option>
-        <option value="Sci-Fi">Sci-Fi</option>
-        <option value="Thriller">Thriller</option>
-      </select>
-      <button type="submit" className="custom-btn">
-        Start
-      </button>
-    </form>
+    <section className="grid gap-4">
+      <form
+        id="game-form"
+        onSubmit={formSubmitHandler}
+        className="flex w-full flex-wrap md:flex-nowrap gap-4 justify-center items-center"
+      >
+        <Select
+          label="Select a mode"
+          name="game"
+          className="max-w-xs"
+          defaultSelectedKeys={['Box-Office']}
+        >
+          {gameModes.map((gameMode) => (
+            <SelectItem key={gameMode.value} value={gameMode.value}>
+              {gameMode.label}
+            </SelectItem>
+          ))}
+        </Select>
+        <Select
+          label="Select a genre"
+          name="genre"
+          className="max-w-xs"
+          defaultSelectedKeys={['All-Genres']}
+        >
+          {genres.map((genre) => (
+            <SelectItem key={genre.value} value={genre.value}>
+              {genre.label}
+            </SelectItem>
+          ))}
+        </Select>
+        <Button type="submit" color="primary">
+          Start
+        </Button>
+      </form>
+      <Card>
+        <CardHeader>
+          <p>Welcome to my little game!</p>
+        </CardHeader>
+        <CardBody>
+          <p>
+            It's a very simple game, you will be presented with two movie
+            titles/posters. The first movie you will be given either how much
+            gross they earned in the box-office or their overall rating. You
+            have to guess whether the second movie's box-office/ratings is
+            higher or lower compared to the first movie.
+          </p>
+          <p>
+            Each correct answer gives you one point and at the end your score
+            will be saved locally for you to see on the scoreboard
+          </p>
+        </CardBody>
+      </Card>
+    </section>
   );
 };
 

@@ -1,5 +1,5 @@
 import Dexie, { type Table } from 'dexie';
-import { Movie } from '../types';
+import { Movie } from 'types';
 
 class MySubClassedDexie extends Dexie {
   movies!: Table<Movie>;

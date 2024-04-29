@@ -1,4 +1,4 @@
-import { getMovieFromDB, putMovieDataIntoDB } from '../../utils/MovieDB';
+import { getMovieFromDB, putMovieDataIntoDB } from 'utils/MovieDB';
 
 interface FetchingMovieList {
   next?: string;
