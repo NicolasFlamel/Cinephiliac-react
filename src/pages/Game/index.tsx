@@ -134,9 +134,6 @@ const Game = ({ gameMode, gameGenre, score }: GameProps) => {
   const nextMovie = () => {
     const randomMovieIndex = Math.floor(Math.random() * (movieList.length - 1));
 
-    // if we run out of movies
-    if (movieList.length === 1) return;
-
     // moves second movie to first and set new second movie
     setComparedMovies((prevState) => [
       { ...prevState[1] },
@@ -202,7 +199,7 @@ const Game = ({ gameMode, gameGenre, score }: GameProps) => {
     if (!correct) return setGameIsOver(true);
 
     score.current++;
-    nextMovie();
+    movieList.length === 0 ? setGameIsOver(true) : nextMovie();
   };
 
   // conditional rendering
@@ -212,13 +209,6 @@ const Game = ({ gameMode, gameGenre, score }: GameProps) => {
     return <Loading>Fetching Movies</Loading>;
   else if (comparedMovies.length === 0 && isLoading)
     return <Loading>Setting up movies to compare</Loading>;
-  else if (movieList.length === 1)
-    return (
-      <section>
-        <h2>Out of Movies!</h2>
-        <Button onClick={() => setGameIsOver(true)}>Click here</Button>
-      </section>
-    );
 
   return (
     <section className="flex justify-center">
