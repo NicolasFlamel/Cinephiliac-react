@@ -32,32 +32,43 @@ const GameOver = ({ gameMode, gameGenre, score }: GameProps) => {
   };
 
   return (
-    <div>
-      <section id="score">
-        {/* display results */}
-        <h2>You're score was: {score.current}</h2>
-        <h3>
-          Game mode: {gameMode === 'Box-Office' ? 'Box Office' : 'Ratings'}
-        </h3>
-        <h3>Genre: {gameGenre === 'All-Genres' ? 'All Genres' : gameGenre}</h3>
-      </section>
-      <section id="user-info">
-        {/* user inputs info for scoreboard */}
-        <h2>Enter Player Name:</h2>
-        <form onSubmit={handleSubmit}>
-          <input
-            type="text"
-            placeholder="Name"
-            name="username"
-            onChange={(e) => (username.current = e.target.value)}
-            disabled={saved}
-          />
-          <Button type="submit" id="save-btn" disabled={saved}>
-            Save
-          </Button>
-        </form>
-      </section>
-    </div>
+    <section className="flex justify-center">
+      <Card className="inline-block justify-center gap-4">
+        <CardHeader>
+          <p>Game over!</p>
+        </CardHeader>
+        <Divider />
+        <CardBody id="score" className="grid gap-4">
+          {/* display results */}
+          <section>
+            <p>You're score was: {score.current}</p>
+            <p>
+              Game mode: {gameMode === 'Box-Office' ? 'Box Office' : 'Ratings'}
+            </p>
+            <p>
+              Genre: {gameGenre === 'All-Genres' ? 'All Genres' : gameGenre}
+            </p>
+          </section>
+          <section id="user-info">
+            {/* user inputs info for scoreboard */}
+            <form
+              onSubmit={handleSubmit}
+              className="flex w-full flex-wrap md:flex-nowrap gap-4"
+            >
+              <Input
+                type="text"
+                label="Username"
+                name="username"
+                onChange={(e) => (username.current = e.target.value)}
+              />
+              <Button className="m-auto" type="submit" id="save-btn">
+                Submit
+              </Button>
+            </form>
+          </section>
+        </CardBody>
+      </Card>
+    </section>
   );
 };
 
