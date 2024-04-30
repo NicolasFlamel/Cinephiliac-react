@@ -15,7 +15,7 @@ import {
   CardHeader,
   Divider,
 } from '@nextui-org/react';
-import GameOver from 'pages/GameOver';
+import GameOver from 'components/GameOver';
 
 const Game = ({ gameMode, gameGenre, score }: GameProps) => {
   const [movieList, setMovieList] = useState<Array<Movie>>([]);

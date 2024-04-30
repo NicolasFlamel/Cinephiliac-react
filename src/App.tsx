@@ -3,7 +3,7 @@ import { useRef, useState } from 'react';
 import { Navigate, Route, Routes, useNavigate } from 'react-router-dom';
 import { NextUIProvider } from '@nextui-org/react';
 import { GameGenreType, GameModeType } from 'types';
-import { Game, GameOver, Home, ScoreBoard } from './pages';
+import { Game, Home, ScoreBoard } from './pages';
 import { Header } from './components';
 
 function App() {
@@ -33,16 +33,6 @@ function App() {
               path="/game"
               element={
                 <Game gameMode={gameMode} gameGenre={gameGenre} score={score} />
-              }
-            />
-            <Route
-              path="/game-over"
-              element={
-                <GameOver
-                  gameMode={gameMode}
-                  gameGenre={gameGenre}
-                  score={score}
-                />
               }
             />
             <Route path="/scoreboard" element={<ScoreBoard />} />
