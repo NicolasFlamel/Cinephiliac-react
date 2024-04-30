@@ -1,5 +1,5 @@
 import Home from './Home';
 import Game from './Game';
-import ScoreBoard from './ScoreBoard';
+import Scoreboard from './Scoreboard';
 
-export { Home, Game, ScoreBoard };
+export { Home, Game, Scoreboard };
