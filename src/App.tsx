@@ -19,7 +19,7 @@ function App() {
 
   return (
     <NextUIProvider navigate={navigate}>
-      <div className="App container mx-auto p-4 bg-foreground-200">
+      <div className="App container mx-auto p-4 bg-foreground-200 max-w-screen-lg">
         <Header darkMode={darkMode} setDarkMode={setDarkMode} />
         <main>
           <Routes>
