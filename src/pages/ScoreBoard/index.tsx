@@ -10,7 +10,7 @@ import {
 } from '@nextui-org/react';
 import { getScores } from 'helpers/localScoreboard';
 
-const ScoreBoard = () => {
+const Scoreboard = () => {
   const scoreboard = getScores();
 
   const boxOfficeScores = scoreboard.filter(
@@ -69,4 +69,4 @@ const ScoreTable = ({ mode, scores }: ScoreTableProps) => {
   );
 };
 
-export default ScoreBoard;
+export default Scoreboard;

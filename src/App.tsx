@@ -3,7 +3,7 @@ import { useRef, useState } from 'react';
 import { Navigate, Route, Routes, useNavigate } from 'react-router-dom';
 import { NextUIProvider } from '@nextui-org/react';
 import { GameGenreType, GameModeType } from 'types';
-import { Game, GameOver, Home, ScoreBoard } from './pages';
+import { Game, Home, Scoreboard } from './pages';
 import { Header } from './components';
 
 function App() {
@@ -19,7 +19,7 @@ function App() {
 
   return (
     <NextUIProvider navigate={navigate}>
-      <div className="App container mx-auto p-4 bg-foreground-200">
+      <div className="App container mx-auto p-4 bg-foreground-200 max-w-screen-lg">
         <Header darkMode={darkMode} setDarkMode={setDarkMode} />
         <main>
           <Routes>
@@ -35,17 +35,7 @@ function App() {
                 <Game gameMode={gameMode} gameGenre={gameGenre} score={score} />
               }
             />
-            <Route
-              path="/game-over"
-              element={
-                <GameOver
-                  gameMode={gameMode}
-                  gameGenre={gameGenre}
-                  score={score}
-                />
-              }
-            />
-            <Route path="/scoreboard" element={<ScoreBoard />} />
+            <Route path="/scoreboard" element={<Scoreboard />} />
             <Route path="/*" element={<Navigate to="/" />} />
           </Routes>
         </main>

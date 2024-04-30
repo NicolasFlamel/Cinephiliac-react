@@ -1,6 +1,5 @@
 import Home from './Home';
 import Game from './Game';
-import GameOver from './GameOver';
-import ScoreBoard from './ScoreBoard';
+import Scoreboard from './Scoreboard';
 
-export { Home, Game, GameOver, ScoreBoard };
+export { Home, Game, Scoreboard };
