@@ -1,3 +1,4 @@
+import { MovieDatabaseApiType, MovieDatabaseResultsType } from 'types';
 import { getMovieFromDB, putMovieDataIntoDB } from 'utils/MovieDB';
 
 interface FetchingMovieList {
@@ -12,11 +13,11 @@ interface FetchingMovieStats {
 }
 
 // fetch movie list from api
-export const fetchMovieList: any = async ({
+export const fetchMovieList = async ({
   next = '',
   signal,
   gameGenre,
-}: FetchingMovieList) => {
+}: FetchingMovieList): Promise<MovieDatabaseResultsType[]> => {
   console.log('Fetching Movie List');
   const options = {
     method: 'GET',
@@ -34,7 +35,7 @@ export const fetchMovieList: any = async ({
         (gameGenre !== 'All-Genres' ? `&genre=${gameGenre}` : ''));
 
   const response = await fetch(url, { ...options, signal });
-  const data = await response.json();
+  const data: MovieDatabaseApiType = await response.json();
   const resultsList = [...data.results];
   const nextData = data.next
     ? await fetchMovieList({ next: data.next, signal, gameGenre })
