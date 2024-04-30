@@ -1,4 +1,4 @@
-import { MovieDatabaseApiType, MovieDatabaseResultsType } from 'types';
+import { Movie, MovieDatabaseApiType, MovieDatabaseResultsType } from 'types';
 import { getMovieFromDB, putMovieDataIntoDB } from 'utils/MovieDB';
 
 interface FetchingMovieList {
@@ -59,7 +59,7 @@ export const fetchMovieStats = async ({
   const omdbUrl = `https://www.omdbapi.com/?i=${imdbId}&apikey=${process.env.REACT_APP_OMDB_Key}`;
   const response = await fetch(omdbUrl, { signal });
   const data = await response.json();
-  const movieStats = {
+  const movieStats: Movie = {
     imdbId,
     title: data.Title,
     boxOffice: data.BoxOffice,
