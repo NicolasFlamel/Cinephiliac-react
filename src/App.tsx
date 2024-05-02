@@ -5,6 +5,9 @@ import { NextUIProvider } from '@nextui-org/react';
 import { GameGenreType, GameModeType } from 'types';
 import { Game, Home, Scoreboard } from './pages';
 import { Header } from './components';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+
+const queryClient = new QueryClient();
 
 function App() {
   const navigate = useNavigate();
@@ -32,7 +35,13 @@ function App() {
             <Route
               path="/game"
               element={
-                <Game gameMode={gameMode} gameGenre={gameGenre} score={score} />
+                <QueryClientProvider client={queryClient}>
+                  <Game
+                    gameMode={gameMode}
+                    gameGenre={gameGenre}
+                    score={score}
+                  />
+                </QueryClientProvider>
               }
             />
             <Route path="/scoreboard" element={<Scoreboard />} />
