@@ -3,8 +3,8 @@ import { Image } from '@nextui-org/react';
 import noImg from 'assets/img/no-image-placeholder.png';
 
 interface MovieCardProps {
-  movieData?: any;
-  gameMode?: GameModeType;
+  movieData: any;
+  gameMode: GameModeType;
   showStat?: boolean;
 }
 

@@ -5,16 +5,17 @@ import {
   useQuery,
   useQueryClient,
 } from '@tanstack/react-query';
-import { Movie } from 'types';
+import {
+  GameGenreType,
+  Movie,
+  MovieIndexedDB,
+  MovieList,
+  MovieTypes,
+  MovieWithStats,
+} from 'types';
 import { getMovieFromDB, putMovieDataIntoDB } from 'utils/MovieDB';
 
 type QueryKeyType = [string, string, string?];
-
-type fetchMovieListType = ({
-  queryKey: [_key, gameGenre, next],
-}: {
-  queryKey: QueryKeyType;
-}) => Promise<Movie[]>;
 
 let db: IDBDatabase;
 const request = indexedDB.open('CinephiliacDB');
@@ -31,11 +32,11 @@ export const randomIndex = (list: any[]) =>
   Math.floor(Math.random() * list.length);
 
 type UseGetMovieListType = (
-  gameGenre: string,
+  gameGenre: GameGenreType,
 ) => [
-  UseQueryResult<Movie[], Error>,
-  UseQueryResult<[Movie, Movie], Error>,
-  UseQueryResult<Movie, Error>[],
+  UseQueryResult<MovieList[], Error>,
+  UseQueryResult<[MovieTypes, MovieTypes], Error>,
+  UseQueryResult<MovieWithStats, Error>[],
 ];
 export const useGetMovieList: UseGetMovieListType = (gameGenre) => {
   const listQuery = useQuery({
@@ -47,7 +48,7 @@ export const useGetMovieList: UseGetMovieListType = (gameGenre) => {
 
   const pairQuery = useQuery({
     queryKey: ['moviePair'],
-    queryFn: async (): Promise<[Movie, Movie]> => {
+    queryFn: async (): Promise<[MovieTypes, MovieTypes]> => {
       if (!movieList) throw new Error('no movie list');
       const firstIndex = randomIndex(movieList);
       let secondIndex = randomIndex(movieList);
@@ -73,18 +74,15 @@ export const useGetMovieList: UseGetMovieListType = (gameGenre) => {
   return [listQuery, pairQuery, statsQueries];
 };
 
-// type UseMutateMovieListReturn = [
-//   React.MutableRefObject<[string, string] | undefined>,
-//   UseMutationResult<Movie[], Error, void, unknown>,
-// ];
-// type UseMutateMovieListType = (gameGenre: string) => UseMutateMovieListReturn;
-export const useMutateMovieList = (gameGenre: string) => {
+export const useMutateMovieList = (gameGenre: GameGenreType) => {
   const qClient = useQueryClient();
 
   const mutation = useMutation({
     mutationFn: async (): Promise<[Movie[], [Movie, Movie]]> => {
       const movieList = qClient.getQueryData<Movie[]>(['movieList', gameGenre]);
-      const moviePair = qClient.getQueryData<[Movie, Movie]>(['moviePair']);
+      const moviePair = qClient.getQueryData<[MovieTypes, MovieTypes]>([
+        'moviePair',
+      ]);
 
       if (!movieList || !moviePair) throw new Error('No movie list or pair');
 
@@ -114,8 +112,13 @@ export const useMutateMovieList = (gameGenre: string) => {
   return mutation;
 };
 
+type FetchMovieList = ({
+  queryKey: [_key, gameGenre, next],
+}: {
+  queryKey: QueryKeyType;
+}) => Promise<Movie[] | MovieIndexedDB[]>;
 // fetch movie list from api
-export const fetchMovieList: fetchMovieListType = async ({ queryKey }) => {
+export const fetchMovieList: FetchMovieList = async ({ queryKey }) => {
   await new Promise((res) => {
     const interval = setInterval((): any => {
       if (!db) return;
@@ -126,7 +129,7 @@ export const fetchMovieList: fetchMovieListType = async ({ queryKey }) => {
 
   if (!db) return [];
 
-  const things = await new Promise<Movie[]>((resolve, reject) => {
+  const things = await new Promise<MovieIndexedDB[]>((resolve, reject) => {
     const transaction = db.transaction(['movies']);
     const objectStore = transaction.objectStore('movies');
     const request = objectStore.getAll();
@@ -176,7 +179,7 @@ export const fetchMovieList: fetchMovieListType = async ({ queryKey }) => {
 export const fetchMovieStats = async (imdbId: string) => {
   const movie = await getMovieFromDB(imdbId);
 
-  if (movie?.title) return movie;
+  if (movie && 'boxOffice' in movie) return movie;
 
   const omdbUrl = `https://www.omdbapi.com/?i=${imdbId}&apikey=${process.env.REACT_APP_OMDB_Key}`;
   const response = await fetch(omdbUrl);
@@ -184,7 +187,7 @@ export const fetchMovieStats = async (imdbId: string) => {
   if (!response.ok) throw new Error('Movie stats fetch response was not ok');
 
   const data = await response.json();
-  const movieStats: Movie = {
+  const movieStats: MovieWithStats = {
     imdbId,
     title: data.Title,
     boxOffice: data.BoxOffice,

@@ -1,4 +1,5 @@
 import { Dispatch, MutableRefObject, SetStateAction } from 'react';
+import { MovieDatabaseApiType, MovieDatabaseResultsType } from './apiTypes';
 
 const gameModes = ['Box-Office', 'Ratings'] as const;
 const genres = [
@@ -14,27 +15,30 @@ const genres = [
   'Thriller',
 ] as const;
 
-/**
- * imdbID - string
- *
- * genre - Array<string>;
- *
- * title - string;
- *
- * boxOffice - string;
- *
- * rating - string;
- *
- * posterUrl? - string;
- */
 export interface Movie {
   imdbId: string;
   title: string;
+}
+
+export interface MovieWithStats extends Movie {
   boxOffice: string;
   rating: string;
-  genre?: Array<string>;
   posterUrl?: string;
 }
+
+export type MovieTypes = Movie | MovieWithStats;
+
+export interface MovieDBWithoutStats extends Movie {
+  genre: GameGenreType[];
+}
+
+export interface MovieDBWithStats extends MovieWithStats {
+  genre: GameGenreType[];
+}
+
+export type MovieIndexedDB = MovieDBWithoutStats | MovieDBWithStats;
+
+export type MovieList = Movie | MovieIndexedDB;
 
 export interface GameProps {
   gameMode: GameModeType;
@@ -56,36 +60,10 @@ export type GameGenreType = (typeof genres)[number];
 
 export type Dispatcher<T> = Dispatch<SetStateAction<T>>;
 
-export const isGameModeType = (value: string): value is GameModeType => {
-  return gameModes.includes(value as GameModeType);
-};
+export const isGameModeType = (value: string): value is GameModeType =>
+  gameModes.includes(value as GameModeType);
 
-export const isGameGenreType = (value: string): value is GameGenreType => {
-  return genres.includes(value as GameGenreType);
-};
+export const isGameGenreType = (value: string): value is GameGenreType =>
+  genres.includes(value as GameGenreType);
 
-export type MovieDatabaseResultsType = {
-  id: string;
-  originalTitleText: {
-    text: string;
-  };
-  position: number;
-  primaryImage?: {
-    caption: {
-      plainText: string;
-    };
-    width: number;
-    height: number;
-    id: string;
-    url: string;
-  };
-  releaseDate: { day: number; month: number; year: number };
-  titleText: { text: string };
-};
-
-export type MovieDatabaseApiType = {
-  entries: number;
-  next: string | null;
-  page: string | number;
-  results: MovieDatabaseResultsType[];
-};
+export type { MovieDatabaseApiType, MovieDatabaseResultsType };
