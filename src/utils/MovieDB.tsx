@@ -1,8 +1,14 @@
 import Dexie, { type Table } from 'dexie';
-import { Movie } from 'types';
+import {
+  GameGenreType,
+  Movie,
+  MovieIndexedDB,
+  MovieDBWithStats,
+  MovieWithStats,
+} from 'types';
 
 class MySubClassedDexie extends Dexie {
-  movies!: Table<Movie>;
+  movies!: Table<MovieIndexedDB | MovieDBWithStats>;
 
   constructor() {
     super('CinephiliacDB');
@@ -18,7 +24,11 @@ db.version(1).stores({
   movies: 'imdbId, *genre', // Primary key and indexed props
 });
 
-export const addMoviesToDB = async (movieList: Array<Movie>, genre: string) => {
+type AddMovieToDBType = (
+  a: Array<Movie | MovieWithStats>,
+  b: GameGenreType,
+) => void;
+export const addMoviesToDB: AddMovieToDBType = async (movieList, genre) => {
   const movieListFormatted = movieList.map((movie) => ({
     ...movie,
     genre: [genre],
@@ -59,7 +69,7 @@ export const putMovieDataIntoDB = async ({
   boxOffice,
   posterUrl,
   rating,
-}: Movie) => {
+}: MovieWithStats) => {
   return await db.movies.update(imdbId, {
     title,
     boxOffice,
@@ -68,12 +78,14 @@ export const putMovieDataIntoDB = async ({
   });
 };
 
-export const getMovieListFromDB = async (genre: string) => {
+export const getMovieListFromDB = async (genre: GameGenreType) => {
   return db.movies.where('genre').equals(genre).toArray();
 };
 
 export const getMovieFromDB = async (imdbId: string) => {
-  return db.movies.get(imdbId);
+  const dbMovie = await db.movies.get(imdbId);
+
+  return dbMovie;
 };
 
 export const removeMovieFromDB = async (imdbId: string) => {
