@@ -11,10 +11,10 @@ const queryClient = new QueryClient();
 
 function App() {
   const navigate = useNavigate();
+  const score = useRef<number>(0);
   const [darkMode, setDarkMode] = useState(false);
   const [gameMode, setGameMode] = useState<GameModeType>('Box-Office');
   const [gameGenre, setGameGenre] = useState<GameGenreType>('All-Genres');
-  const score = useRef<number>(0);
   const docClassList = document.documentElement.classList;
 
   if (darkMode) docClassList.add('dark');

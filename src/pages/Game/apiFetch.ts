@@ -8,25 +8,18 @@ import {
 import {
   GameGenreType,
   Movie,
+  MovieDatabaseApiType,
   MovieIndexedDB,
   MovieList,
   MovieTypes,
   MovieWithStats,
 } from 'types';
-import { getMovieFromDB, putMovieDataIntoDB } from 'utils/MovieDB';
-
-type QueryKeyType = [string, string, string?];
-
-let db: IDBDatabase;
-const request = indexedDB.open('CinephiliacDB');
-
-request.onerror = () => {
-  console.error("Why didn't you allow my web app to use IndexedDB?!");
-};
-request.onsuccess = () => {
-  console.log('connected');
-  db = request.result;
-};
+import {
+  addMoviesToDB,
+  getMovieFromDB,
+  getMovieListFromDB,
+  putMovieDataIntoDB,
+} from 'utils/MovieDB';
 
 export const randomIndex = (list: any[]) =>
   Math.floor(Math.random() * list.length);
@@ -41,7 +34,7 @@ type UseGetMovieListType = (
 export const useGetMovieList: UseGetMovieListType = (gameGenre) => {
   const listQuery = useQuery({
     queryKey: ['movieList', gameGenre],
-    queryFn: fetchMovieList,
+    queryFn: () => fetchMovieList(gameGenre),
   });
 
   const movieList = listQuery?.data;
@@ -112,67 +105,50 @@ export const useMutateMovieList = (gameGenre: GameGenreType) => {
   return mutation;
 };
 
-type FetchMovieList = ({
-  queryKey: [_key, gameGenre, next],
-}: {
-  queryKey: QueryKeyType;
-}) => Promise<Movie[] | MovieIndexedDB[]>;
+type FetchMovieList = (
+  gameGenre: GameGenreType,
+  next?: string,
+) => Promise<Movie[] | MovieIndexedDB[]>;
 // fetch movie list from api
-export const fetchMovieList: FetchMovieList = async ({ queryKey }) => {
-  await new Promise((res) => {
-    const interval = setInterval((): any => {
-      if (!db) return;
-      res(true);
-      clearInterval(interval);
-    }, 1000);
-  });
+export const fetchMovieList: FetchMovieList = async (gameGenre, next) => {
+  if (!next) {
+    const localMovieList = await getMovieListFromDB(gameGenre);
+    if (localMovieList.length > 9) return localMovieList;
+  }
 
-  if (!db) return [];
+  console.log('fetching movie list');
+  const options = {
+    method: 'GET',
+    headers: {
+      'X-RapidAPI-Key': process.env.REACT_APP_RAPID_API!,
+      'X-RapidAPI-Host': 'moviesdatabase.p.rapidapi.com',
+    },
+  };
+  const url =
+    'https://moviesdatabase.p.rapidapi.com' +
+    (next
+      ? next
+      : '/titles?list=top_rated_english_250&startYear=2000' +
+        (gameGenre !== 'All-Genres' ? `&genre=${gameGenre}` : ''));
 
-  const things = await new Promise<MovieIndexedDB[]>((resolve, reject) => {
-    const transaction = db.transaction(['movies']);
-    const objectStore = transaction.objectStore('movies');
-    const request = objectStore.getAll();
-    request.onsuccess = (event) => {
-      resolve(request.result);
-    };
-  });
+  const response = await fetch(url, { ...options });
 
-  return things;
+  if (!response.ok) throw new Error('Movie list fetch response was not ok');
 
-  // const [_key, gameGenre, next] = queryKey;
-  // console.log('Fetching Movie List', _key);
-  // const options = {
-  //   method: 'GET',
-  //   headers: {
-  //     'X-RapidAPI-Key': process.env.REACT_APP_RAPID_API!,
-  //     'X-RapidAPI-Host': 'moviesdatabase.p.rapidapi.com',
-  //   },
-  // };
-  // const url =
-  //   'https://moviesdatabase.p.rapidapi.com' +
-  //   (next
-  //     ? next
-  //     : '/titles?list=top_rated_english_250&startYear=2000' +
-  //       (gameGenre !== 'All-Genres' ? `&genre=${gameGenre}` : ''));
+  const data: MovieDatabaseApiType = await response.json();
+  const resultsList: Movie[] = data.results.map((movie) => ({
+    imdbId: movie.id,
+    title: movie.titleText.text,
+  }));
 
-  // const response = await fetch(url, { ...options });
+  if (!data.next) return resultsList;
 
-  // if (!response.ok) throw new Error('Movie list fetch response was not ok');
+  const nextData = await fetchMovieList(gameGenre, data.next);
+  const fullList = resultsList.concat(nextData);
 
-  // const data: MovieDatabaseApiType = await response.json();
-  // const resultsList = [...data.results];
+  if (Number(data.page) === 1) addMoviesToDB(fullList, gameGenre);
 
-  // if (!data.next) return resultsList;
-
-  // const nextQueryKey: QueryKeyType = [_key, gameGenre, data.next];
-
-  // const nextData = await fetchMovieList({ queryKey: nextQueryKey });
-  // const fullList = resultsList.concat(nextData);
-
-  // if(Number(data.page) === 1) addMoviesToDB(fullList, gameGenre)
-
-  // return fullList;
+  return fullList;
 };
 
 // fetch movie list from api
