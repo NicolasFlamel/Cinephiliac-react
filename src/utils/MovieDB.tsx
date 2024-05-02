@@ -78,7 +78,7 @@ export const putMovieDataIntoDB = async ({
   });
 };
 
-export const getMovieListFromDB = async (genre: string) => {
+export const getMovieListFromDB = async (genre: GameGenreType) => {
   return db.movies.where('genre').equals(genre).toArray();
 };
 
