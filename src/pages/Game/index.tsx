@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { GameProps } from 'types';
-import { Loading, MovieCard } from 'components';
+import { Fallback, Loading, MovieCard } from 'components';
 import { useGetMovieList, useMutateMovieList } from './apiFetch';
 import {
   Button,
@@ -23,11 +23,11 @@ const Game = ({ gameMode, gameGenre, score }: GameProps) => {
   }, [score]);
 
   // conditional rendering
-  if (gameIsOver) {
-    return <GameOver {...{ gameMode, gameGenre, score }} />;
-  } else if (listQuery.isLoading) return <Loading>Fetching Movies</Loading>;
-  else if (listQuery.isError) return <h1>Error</h1>;
-  else if (pairQuery.isLoading) return <Loading>Getting Movie Pair</Loading>;
+  if (gameIsOver) return <GameOver {...{ gameMode, gameGenre, score }} />;
+  else if (listQuery.isPending) return <Loading>Fetching Movies</Loading>;
+  else if (listQuery.isError) return <Fallback error={listQuery.error} />;
+  else if (pairQuery.isPending) return <Loading>Getting Movie Pair</Loading>;
+  else if (pairQuery.isError) return <Fallback error={pairQuery.error} />;
 
   const compareMovies = (choice: '>' | '<') => {
     const compareFunction = {
@@ -58,17 +58,18 @@ const Game = ({ gameMode, gameGenre, score }: GameProps) => {
     if (!correct) return setGameIsOver(true);
 
     score.current++;
-    listQuery.data?.length === 2 ? setGameIsOver(true) : nextMovie();
+    listQuery.data.length === 2 ? setGameIsOver(true) : nextMovie();
   };
 
   return (
     <section className="flex justify-center">
       <Card className="grid justify-center gap-4 p-4">
         <CardHeader className="row-start-1 justify-center">
-          {/* <h2 className="text-center max-w-max">
-            Does <em>{comparedMovies[1].title}</em> have a higher or lower{' '}
-            {gameMode} amount than <em>{comparedMovies[0].title}</em>?
-          </h2> */}
+          <h2 className="text-center max-w-max">
+            Does <em> {pairQuery.data[1].title} </em>
+            have a higher or lower {gameMode} amount than
+            <em> {pairQuery.data[0].title}</em>?
+          </h2>
         </CardHeader>
         <Divider />
         <CardBody className="grid md:gap-4 md:grid-cols-2 md:divide-y-0 divide-y-large justify-center p-4">
