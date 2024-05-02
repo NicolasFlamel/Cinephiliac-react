@@ -1,12 +1,7 @@
 import { useEffect, useState } from 'react';
-import { GameProps, Movie } from 'types';
+import { GameProps } from 'types';
 import { Loading, MovieCard } from 'components';
-import {
-  addMoviesToDB,
-  getMovieListFromDB,
-  removeMovieFromDB,
-} from 'utils/MovieDB';
-import { fetchMovieList, fetchMovieStats } from './apiFetch';
+import { useGetMovieList, useMutateMovieList } from './apiFetch';
 import {
   Button,
   Card,
@@ -18,231 +13,79 @@ import {
 import GameOver from 'components/GameOver';
 
 const Game = ({ gameMode, gameGenre, score }: GameProps) => {
-  const [movieList, setMovieList] = useState<Array<Movie>>([]);
-  const [comparedMovies, setComparedMovies] = useState<Movie[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
   const [gameIsOver, setGameIsOver] = useState(false);
+  const [listQuery, pairQuery, [firstMovie, secondMovie]] =
+    useGetMovieList(gameGenre);
+  const { mutate: nextMovie } = useMutateMovieList(gameGenre);
 
-  // on mount getMovieList
   useEffect(() => {
-    const controller = new AbortController();
-    const signal = controller.signal;
-
-    const getMovieListDB = async () => {
-      const randomIndex = () => Math.floor(Math.random() * movieListDB.length);
-      let movieListDB = await getMovieListFromDB(gameGenre);
-
-      if (!movieListDB.length) {
-        const fetchedMovieList = await fetchMovieList({
-          signal,
-          gameGenre,
-        }).catch((error: any) =>
-          error instanceof DOMException
-            ? null
-            : console.error('fetchMovieList', error),
-        );
-
-        if (!fetchedMovieList) return;
-
-        movieListDB = fetchedMovieList.map((movie: { id: string }) => ({
-          imdbId: movie.id,
-        }));
-
-        addMoviesToDB(movieListDB, gameGenre);
-      }
-
-      const ranMovieOne = movieListDB[randomIndex()];
-      let ranMovieTwo = movieListDB[randomIndex()];
-
-      while (ranMovieOne.imdbId === ranMovieTwo.imdbId)
-        ranMovieTwo = movieListDB[randomIndex()];
-
-      setComparedMovies([ranMovieOne, ranMovieTwo]);
-
-      setMovieList(
-        movieListDB.filter((movie) =>
-          movie.imdbId === ranMovieOne.imdbId ||
-          movie.imdbId === ranMovieTwo.imdbId
-            ? false
-            : true,
-        ),
-      );
-    };
-
     score.current = 0;
+  }, [score]);
 
-    getMovieListDB();
-
-    return () => controller.abort();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  // fetch rest of movieStats when movie changes
-  useEffect(() => {
-    const controller = new AbortController();
-    const signal = controller.signal;
-
-    const fetchData = async () => {
-      if (comparedMovies?.length !== 2) return setIsLoading(true);
-      else if (comparedMovies.every((movie) => movie.posterUrl))
-        return setIsLoading(false);
-
-      setIsLoading(true);
-
-      const [movieOneStats, movieTwoStats] = await Promise.all([
-        fetchMovieStats({ imdbId: comparedMovies[0].imdbId, signal }),
-        fetchMovieStats({ imdbId: comparedMovies[1].imdbId, signal }),
-      ]);
-
-      const removedMovie = [movieOneStats, movieTwoStats].map((movie) => {
-        if (movie.boxOffice !== 'N/A') return false;
-
-        removeMovie(movie.imdbId);
-        return true;
-      });
-
-      if (removedMovie.includes(true)) return;
-
-      // store data & account for no stats on box office
-      setComparedMovies((prevState) => {
-        const movieOne = {
-          ...prevState[0],
-          title: movieOneStats.title,
-          boxOffice: movieOneStats.boxOffice,
-          posterUrl: movieOneStats.posterUrl,
-          imdbRating: movieOneStats.rating,
-        };
-        const movieTwo = {
-          ...prevState[1],
-          title: movieTwoStats.title,
-          boxOffice: movieTwoStats.boxOffice,
-          posterUrl: movieTwoStats.posterUrl,
-          imdbRating: movieTwoStats.rating,
-        };
-        return [movieOne, movieTwo];
-      });
-    };
-
-    fetchData().catch((err) =>
-      err instanceof DOMException ? null : console.error('fetchData', err),
-    );
-
-    return () => controller.abort();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [movieList, comparedMovies]);
-
-  const nextMovie = () => {
-    const randomMovieIndex = Math.floor(Math.random() * (movieList.length - 1));
-
-    // moves second movie to first and set new second movie
-    setComparedMovies((prevState) => [
-      { ...prevState[1] },
-      movieList[randomMovieIndex],
-    ]);
-
-    // remove selected movies already
-    removeMovieFromState(movieList[randomMovieIndex].imdbId);
-  };
-
-  const removeMovie = async (imdbId: string) => {
-    const randomMovie =
-      movieList[Math.floor(Math.random() * (movieList.length - 1))];
-
-    removeMovieFromState(imdbId);
-
-    setComparedMovies((prevState) => [
-      ...prevState.map((movie) =>
-        movie.imdbId === imdbId ? randomMovie : movie,
-      ),
-    ]);
-
-    removeMovieFromDB(imdbId);
-  };
-
-  const removeMovieFromState = (imdbId: string) => {
-    setMovieList((prevState) =>
-      prevState.filter((movie) => movie.imdbId !== imdbId),
-    );
-  };
+  // conditional rendering
+  if (gameIsOver) {
+    return <GameOver {...{ gameMode, gameGenre, score }} />;
+  } else if (listQuery.isLoading) return <Loading>Fetching Movies</Loading>;
+  else if (listQuery.isError) return <h1>Error</h1>;
+  else if (pairQuery.isLoading) return <Loading>Getting Movie Pair</Loading>;
 
   const compareMovies = (choice: '>' | '<') => {
     const compareFunction = {
-      '>': (x: number, y: number) => {
-        return x > y;
+      '>': (secondStat: number, firstStat: number) => {
+        return secondStat > firstStat;
       },
-      '<': (x: number, y: number) => {
-        return x < y;
+      '<': (secondStat: number, firstStat: number) => {
+        return secondStat < firstStat;
       },
     };
 
-    if (!comparedMovies) return console.error('No comparedMovies to compare');
+    if (firstMovie.isLoading || secondMovie.isLoading) return;
+    else if (firstMovie.isError || secondMovie.isError) return;
+    else if (!firstMovie.data || !secondMovie.data) return;
 
-    const [movieOneStat, movieTwoStat] = comparedMovies.map((movie) => {
-      if (gameMode === 'Box-Office' && movie.boxOffice) {
-        return Number(movie.boxOffice.match(/\d+/g)?.join(''));
-      } else if (gameMode === 'Box-Office' && movie.rating) {
-        return Number(movie.rating);
-      } else {
-        console.error(`Error in compareMovies() with genre ${gameMode}`);
-        return -1;
-      }
-    });
+    const [firstStat, secondStat] = [firstMovie, secondMovie].map(({ data }) =>
+      gameMode === 'Box-Office'
+        ? Number(data.boxOffice.match(/\d+/g)?.join(''))
+        : Number(data.rating),
+    );
 
-    return compareFunction[choice](movieTwoStat, movieOneStat);
+    return compareFunction[choice](secondStat, firstStat);
   };
 
   const handleAnswerClick = (userInput: '>' | '<') => {
-    setIsLoading(true);
-
     const correct = compareMovies(userInput);
 
     if (!correct) return setGameIsOver(true);
 
     score.current++;
-    movieList.length === 0 ? setGameIsOver(true) : nextMovie();
+    listQuery.data?.length === 2 ? setGameIsOver(true) : nextMovie();
   };
-
-  // conditional rendering
-  if (gameIsOver)
-    return <GameOver gameMode={gameMode} gameGenre={gameGenre} score={score} />;
-  else if (movieList.length === 0 && isLoading)
-    return <Loading>Fetching Movies</Loading>;
-  else if (comparedMovies.length === 0 && isLoading)
-    return <Loading>Setting up movies to compare</Loading>;
 
   return (
     <section className="flex justify-center">
       <Card className="grid justify-center gap-4 p-4">
         <CardHeader className="row-start-1 justify-center">
-          <h2 className="text-center max-w-max">
+          {/* <h2 className="text-center max-w-max">
             Does <em>{comparedMovies[1].title}</em> have a higher or lower{' '}
             {gameMode} amount than <em>{comparedMovies[0].title}</em>?
-          </h2>
+          </h2> */}
         </CardHeader>
         <Divider />
         <CardBody className="grid md:gap-4 md:grid-cols-2 md:divide-y-0 divide-y-large justify-center p-4">
-          {comparedMovies.map((movie, index) => (
-            <MovieCard
-              key={movie.imdbId}
-              movieData={movie}
-              showStat={index === 0}
-              gameMode={gameMode}
-            />
-          ))}
+          <MovieCard movieData={firstMovie} gameMode={gameMode} showStat />
+          <MovieCard movieData={secondMovie} gameMode={gameMode} />
         </CardBody>
         <CardFooter className="flex flex-wrap justify-center gap-4">
           <Button
             color="danger"
-            isDisabled={isLoading}
             onClick={() => handleAnswerClick('>')}
+            onKeyDown={(e) => {
+              if (e.code === 'KeyW') handleAnswerClick('>');
+            }}
           >
             Higher
           </Button>
-          <Button
-            color="primary"
-            isDisabled={isLoading}
-            onClick={() => handleAnswerClick('<')}
-          >
+          <Button color="primary" onClick={() => handleAnswerClick('<')}>
             Lower
           </Button>
         </CardFooter>

@@ -2,10 +2,10 @@ import './App.css';
 import { useRef, useState } from 'react';
 import { Navigate, Route, Routes, useNavigate } from 'react-router-dom';
 import { NextUIProvider } from '@nextui-org/react';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { GameGenreType, GameModeType } from 'types';
 import { Game, Home, Scoreboard } from './pages';
 import { Header } from './components';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 const queryClient = new QueryClient();
 

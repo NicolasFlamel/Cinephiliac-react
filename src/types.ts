@@ -14,12 +14,25 @@ const genres = [
   'Thriller',
 ] as const;
 
+/**
+ * imdbID - string
+ *
+ * genre - Array<string>;
+ *
+ * title - string;
+ *
+ * boxOffice - string;
+ *
+ * rating - string;
+ *
+ * posterUrl? - string;
+ */
 export interface Movie {
   imdbId: string;
+  title: string;
+  boxOffice: string;
+  rating: string;
   genre?: Array<string>;
-  title?: string;
-  boxOffice?: string;
-  rating?: string;
   posterUrl?: string;
 }
 
