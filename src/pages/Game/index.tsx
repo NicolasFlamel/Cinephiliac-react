@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { GameProps } from 'types';
 import { Fallback, Loading, MovieCard } from 'components';
-import { useGetMovieList, useMutateMovieList } from './apiFetch';
+import { useGetMovieList, useMutateMovieList } from 'api';
 import {
   Button,
   Card,

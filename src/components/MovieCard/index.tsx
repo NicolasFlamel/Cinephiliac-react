@@ -13,7 +13,7 @@ const MovieCard = ({ movieData, gameMode, showStat }: MovieCardProps) => {
   if (movieData.isPending) return <h1>Loading stats</h1>;
   else if (movieData.isError) {
     console.error(movieData.error);
-    return <h1>Errored</h1>;
+    return <h1>Still Loading</h1>;
   }
 
   return (
