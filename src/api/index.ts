@@ -27,6 +27,7 @@ export const useGetMovieList: UseGetMovieListType = (gameGenre) => {
   const listQuery = useQuery({
     queryKey: ['movieList', gameGenre],
     queryFn: () => fetchMovieList(gameGenre),
+    refetchOnWindowFocus: false,
   });
 
   const movieList = listQuery?.data;
@@ -43,6 +44,7 @@ export const useGetMovieList: UseGetMovieListType = (gameGenre) => {
       return [movieList[firstIndex], movieList[secondIndex]];
     },
     enabled: !!movieList,
+    refetchOnWindowFocus: false,
   });
 
   const moviePair = pairQuery.data;
@@ -52,6 +54,7 @@ export const useGetMovieList: UseGetMovieListType = (gameGenre) => {
       ? moviePair.map((movie) => ({
           queryKey: ['movieStats', movie.imdbId],
           queryFn: () => fetchMovieStats(movie.imdbId),
+          refetchOnWindowFocus: false,
         }))
       : [],
   });
