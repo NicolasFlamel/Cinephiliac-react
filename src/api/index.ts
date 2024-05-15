@@ -1,4 +1,5 @@
 import {
+  UseQueryOptions,
   UseQueryResult,
   useMutation,
   useQueries,
@@ -32,7 +33,7 @@ export const useGetMovieList: UseGetMovieListType = (gameGenre) => {
 
   const movieList = listQuery?.data;
 
-  const pairQuery = useQuery({
+  const pairQuery = useQuery<[MovieTypes, MovieTypes]>({
     queryKey: ['moviePair'],
     queryFn: async (): Promise<[MovieTypes, MovieTypes]> => {
       if (!movieList) throw new Error('no movie list');
@@ -49,7 +50,7 @@ export const useGetMovieList: UseGetMovieListType = (gameGenre) => {
 
   const moviePair = pairQuery.data;
 
-  const statsQueries = useQueries({
+  const statsQueries = useQueries<UseQueryOptions<MovieWithStats>[]>({
     queries: moviePair
       ? moviePair.map((movie) => ({
           queryKey: ['movieStats', movie.imdbId],
