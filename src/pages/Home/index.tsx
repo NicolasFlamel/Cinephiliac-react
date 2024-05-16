@@ -1,5 +1,4 @@
 import { useNavigate } from 'react-router';
-import { Dispatcher, GameGenreType, GameModeType } from 'types';
 import {
   Button,
   Card,
@@ -9,11 +8,9 @@ import {
   SelectItem,
 } from '@nextui-org/react';
 import { genres, gameModes } from './data';
+import { useGameDispatch } from 'context/GameContext';
 
-interface HomeProps {
-  setGameMode: Dispatcher<GameModeType>;
-  setGameGenre: Dispatcher<GameGenreType>;
-}
+interface HomeProps {}
 
 interface FormElements extends HTMLFormControlsCollection {
   game: HTMLInputElement;
@@ -24,8 +21,9 @@ interface YourFormElement extends HTMLFormElement {
   readonly elements: FormElements;
 }
 
-const Home = ({ setGameMode, setGameGenre }: HomeProps) => {
+const Home = (props: HomeProps) => {
   const navigate = useNavigate();
+  const { setGameGenre, setGameMode } = useGameDispatch();
 
   const formSubmitHandler = (e: React.FormEvent<YourFormElement>) => {
     e.preventDefault();

@@ -11,8 +11,10 @@ import {
   Divider,
 } from '@nextui-org/react';
 import GameOver from 'components/GameOver';
+import { useGameState } from 'context/GameContext';
 
-const Game = ({ gameMode, gameGenre, score }: GameProps) => {
+const Game = ({ score }: GameProps) => {
+  const { gameGenre, gameMode } = useGameState();
   const [gameIsOver, setGameIsOver] = useState(false);
   const [listQuery, pairQuery, [firstMovie, secondMovie]] =
     useGetMovieList(gameGenre);

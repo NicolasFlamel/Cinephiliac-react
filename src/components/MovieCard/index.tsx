@@ -18,7 +18,6 @@ const MovieCard = ({ movieData, gameMode, showStat }: MovieCardProps) => {
 
   // if isError then change the movie
   useEffect(() => {
-    console.log('useEffect');
     if (isError) {
       if (typeof error.cause === 'string') {
         const imdbId = error.cause;
