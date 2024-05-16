@@ -42,8 +42,6 @@ export type MovieIndexedDB = MovieDBWithoutStats | MovieDBWithStats;
 export type MovieList = MovieType | MovieIndexedDB;
 
 export interface GameProps {
-  gameMode: GameModeType;
-  gameGenre: GameGenreType;
   score: MutableRefObject<number>;
 }
 

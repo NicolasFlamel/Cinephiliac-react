@@ -1,5 +1,4 @@
 import { useNavigate } from 'react-router';
-import { Dispatcher, GameGenreType, GameModeType } from 'types';
 import {
   Button,
   Card,
@@ -9,11 +8,9 @@ import {
   SelectItem,
 } from '@nextui-org/react';
 import { genres, gameModes } from './data';
+import { useGameDispatch, useGameState } from 'context/GameContext';
 
-interface HomeProps {
-  setGameMode: Dispatcher<GameModeType>;
-  setGameGenre: Dispatcher<GameGenreType>;
-}
+interface HomeProps {}
 
 interface FormElements extends HTMLFormControlsCollection {
   game: HTMLInputElement;
@@ -24,8 +21,10 @@ interface YourFormElement extends HTMLFormElement {
   readonly elements: FormElements;
 }
 
-const Home = ({ setGameMode, setGameGenre }: HomeProps) => {
+const Home = (props: HomeProps) => {
   const navigate = useNavigate();
+  const { gameGenre, gameMode } = useGameState();
+  const { setGameGenre, setGameMode } = useGameDispatch();
 
   const formSubmitHandler = (e: React.FormEvent<YourFormElement>) => {
     e.preventDefault();
@@ -51,11 +50,11 @@ const Home = ({ setGameMode, setGameGenre }: HomeProps) => {
           label="Select a mode"
           name="game"
           className="max-w-xs"
-          defaultSelectedKeys={['Box-Office']}
+          defaultSelectedKeys={[gameMode]}
         >
-          {gameModes.map((gameMode) => (
-            <SelectItem key={gameMode.value} value={gameMode.value}>
-              {gameMode.label}
+          {gameModes.map((gameModeData) => (
+            <SelectItem key={gameModeData.value} value={gameModeData.value}>
+              {gameModeData.label}
             </SelectItem>
           ))}
         </Select>
@@ -63,7 +62,7 @@ const Home = ({ setGameMode, setGameGenre }: HomeProps) => {
           label="Select a genre"
           name="genre"
           className="max-w-xs"
-          defaultSelectedKeys={['All-Genres']}
+          defaultSelectedKeys={[gameGenre]}
         >
           {genres.map((genre) => (
             <SelectItem key={genre.value} value={genre.value}>

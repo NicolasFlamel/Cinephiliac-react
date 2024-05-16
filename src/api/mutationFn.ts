@@ -2,55 +2,36 @@ import { QueryClient } from '@tanstack/react-query';
 import { GameGenreType, MoviePair, MovieTypes } from 'types';
 import { randomIndex } from './helpers';
 
+// Fn for mutation when getting next movie in pair
 export const movieListFn = async (
   qClient: QueryClient,
   gameGenre: GameGenreType,
-): Promise<[MovieTypes[], MoviePair]> => {
-  const queryKey = ['movieList', gameGenre];
-  const movieList = qClient.getQueryData<MovieTypes[]>(queryKey);
-  const moviePair = qClient.getQueryData<MoviePair>(['moviePair']);
-
-  if (!movieList || !moviePair) throw new Error('No movie list or pair');
-
-  let newMovie = movieList[randomIndex(movieList)];
-
-  while (newMovie.imdbId === moviePair[1].imdbId)
-    newMovie = movieList[randomIndex(movieList)];
-
-  const outMoviePair = (movie: MovieTypes) =>
-    moviePair.some(
-      (pairMovie: MovieTypes) => pairMovie.imdbId === movie.imdbId,
-    ) || movie.imdbId === newMovie.imdbId
-      ? false
-      : true;
-
-  const newList = movieList.filter(outMoviePair);
-  const newPair: MoviePair = [moviePair[1], newMovie];
-
-  return [newList, newPair];
-};
-
-type MoviePairFnType = (
-  qClient: QueryClient,
-  gameGenre: GameGenreType,
-  imdbId: string,
-) => any;
-
-export const moviePairFn: MoviePairFnType = async (
-  qClient,
-  gameGenre,
-  badImdbId,
 ) => {
   const queryKey = ['movieList', gameGenre];
   const movieList = qClient.getQueryData<MovieTypes[]>(queryKey);
-  const moviePair = qClient.getQueryData<MoviePair>(['moviePair']);
+  const moviePair = qClient.getQueryData<MoviePair>(['moviePair', gameGenre]);
 
   if (!movieList || !moviePair) throw new Error('No movie list or pair');
 
-  let newMovie = movieList[randomIndex(movieList)];
+  const newMovie = movieList[randomIndex(movieList)];
+  const newPair: MoviePair = [moviePair[1], newMovie];
 
-  while (newMovie.imdbId === moviePair[1].imdbId)
-    newMovie = movieList[randomIndex(movieList)];
+  return newPair;
+};
+
+// Fn for mutation when movie doesn't have stat
+export const moviePairFn = async (
+  qClient: QueryClient,
+  gameGenre: GameGenreType,
+  badImdbId: string,
+) => {
+  const queryKey = ['movieList', gameGenre];
+  const movieList = qClient.getQueryData<MovieTypes[]>(queryKey);
+  const moviePair = qClient.getQueryData<MoviePair>(['moviePair', gameGenre]);
+
+  if (!movieList || !moviePair) throw new Error('No movie list or pair');
+
+  const newMovie = movieList[randomIndex(movieList)];
 
   const outMoviePair = (movie: MovieTypes) =>
     movie.imdbId === newMovie.imdbId ? false : true;
@@ -61,5 +42,27 @@ export const moviePairFn: MoviePairFnType = async (
 
   if (movieIndex !== -1) newPair[movieIndex] = newMovie;
 
-  return [newList, newPair, moviePair];
+  const data: [MovieTypes[], MoviePair] = [newList, newPair];
+
+  return data;
+};
+
+export const removePairFn = async (
+  qClient: QueryClient,
+  gameGenre: GameGenreType,
+) => {
+  const listQueryKey = ['movieList', gameGenre];
+  const pairQueryKey = ['moviePair', gameGenre];
+  const movieList = qClient.getQueryData<MovieTypes[]>(listQueryKey);
+  const moviePair = qClient.getQueryData<MoviePair>(pairQueryKey);
+
+  if (!movieList || !moviePair) throw new Error('Yikes');
+
+  const newList = movieList.filter((movie) => {
+    if (movie.imdbId === moviePair[0].imdbId) return false;
+    else if (movie.imdbId === moviePair[1].imdbId) return false;
+    else return true;
+  });
+
+  return newList;
 };

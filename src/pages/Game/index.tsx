@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { GameProps } from 'types';
 import { Fallback, Loading, MovieCard } from 'components';
-import { useGetMovieList, useMutateMovieList } from 'api';
+import { useGetMovieList, useMutateNextMovie, useMutateRemovePair } from 'api';
 import {
   Button,
   Card,
@@ -11,16 +11,25 @@ import {
   Divider,
 } from '@nextui-org/react';
 import GameOver from 'components/GameOver';
+import { useGameState } from 'context/GameContext';
 
-const Game = ({ gameMode, gameGenre, score }: GameProps) => {
+const Game = ({ score }: GameProps) => {
+  const { gameGenre, gameMode } = useGameState();
   const [gameIsOver, setGameIsOver] = useState(false);
   const [listQuery, pairQuery, [firstMovie, secondMovie]] =
     useGetMovieList(gameGenre);
-  const { mutate: nextMovie } = useMutateMovieList(gameGenre);
+  const { mutate: nextMovie } = useMutateNextMovie(gameGenre);
+  const { mutate: removePair } = useMutateRemovePair(gameGenre);
 
   useEffect(() => {
     score.current = 0;
   }, [score]);
+
+  useEffect(() => {
+    if (!pairQuery.data) return;
+
+    removePair();
+  }, [pairQuery.data, removePair]);
 
   // conditional rendering
   if (gameIsOver) return <GameOver {...{ gameMode, gameGenre, score }} />;
@@ -58,7 +67,7 @@ const Game = ({ gameMode, gameGenre, score }: GameProps) => {
     if (!correct) return setGameIsOver(true);
 
     score.current++;
-    listQuery.data.length === 2 ? setGameIsOver(true) : nextMovie();
+    listQuery.data.length ? nextMovie() : setGameIsOver(true);
   };
 
   return (
@@ -73,8 +82,8 @@ const Game = ({ gameMode, gameGenre, score }: GameProps) => {
         </CardHeader>
         <Divider />
         <CardBody className="grid md:gap-4 md:grid-cols-2 md:divide-y-0 divide-y-large justify-center p-4">
-          <MovieCard movieData={firstMovie} gameMode={gameMode} showStat />
-          <MovieCard movieData={secondMovie} gameMode={gameMode} />
+          <MovieCard movieData={firstMovie} showStat />
+          <MovieCard movieData={secondMovie} />
         </CardBody>
         <CardFooter className="flex flex-wrap justify-center gap-4">
           <Button color="danger" onClick={() => handleAnswerClick('>')}>

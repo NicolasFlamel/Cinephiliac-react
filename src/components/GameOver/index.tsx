@@ -10,8 +10,10 @@ import {
   Input,
 } from '@nextui-org/react';
 import { addScore } from 'helpers/localScoreboard';
+import { useGameState } from 'context/GameContext';
 
-const GameOver = ({ gameMode, gameGenre, score }: GameProps) => {
+const GameOver = ({ score }: GameProps) => {
+  const { gameGenre, gameMode } = useGameState();
   const username = useRef('');
   const navigate = useNavigate();
 
