@@ -1,20 +1,21 @@
 import { useEffect } from 'react';
-import { GameModeType, MovieWithStats } from 'types';
+import { MovieWithStats } from 'types';
 import { Image } from '@nextui-org/react';
 import { UseQueryResult } from '@tanstack/react-query';
 import noImg from 'assets/img/no-image-placeholder.png';
 import { useMutateMoviePair } from 'api';
 import { removeMovieFromDB } from 'utils/MovieDB';
+import { useGameState } from 'context/GameContext';
 
 interface MovieCardProps {
   movieData: UseQueryResult<MovieWithStats, Error>;
-  gameMode: GameModeType;
   showStat?: boolean;
 }
 
-const MovieCard = ({ movieData, gameMode, showStat }: MovieCardProps) => {
+const MovieCard = ({ movieData, showStat }: MovieCardProps) => {
   const { isError, error, isPending, data } = movieData;
-  const { mutate: changePair } = useMutateMoviePair('All-Genres');
+  const { gameMode, gameGenre } = useGameState();
+  const { mutate: changePair } = useMutateMoviePair(gameGenre);
 
   // if isError then change the movie
   useEffect(() => {

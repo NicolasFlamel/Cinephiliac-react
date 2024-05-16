@@ -75,8 +75,8 @@ const Game = ({ score }: GameProps) => {
         </CardHeader>
         <Divider />
         <CardBody className="grid md:gap-4 md:grid-cols-2 md:divide-y-0 divide-y-large justify-center p-4">
-          <MovieCard movieData={firstMovie} gameMode={gameMode} showStat />
-          <MovieCard movieData={secondMovie} gameMode={gameMode} />
+          <MovieCard movieData={firstMovie} showStat />
+          <MovieCard movieData={secondMovie} />
         </CardBody>
         <CardFooter className="flex flex-wrap justify-center gap-4">
           <Button color="danger" onClick={() => handleAnswerClick('>')}>
