@@ -4,6 +4,7 @@ import {
   MovieDatabaseApiType,
   MovieWithStats,
   MovieTypes,
+  MoviePair,
 } from 'types';
 import { MovieStatsAPI } from 'types/apiTypes';
 import {
@@ -12,11 +13,13 @@ import {
   getMovieListFromDB,
   putMovieDataIntoDB,
 } from 'utils/MovieDB';
+import { randomIndex } from './helpers';
 
 type FetchMovieList = (
   gameGenre: GameGenreType,
   next?: string,
 ) => Promise<MovieTypes[]>;
+
 // fetch movie list from api
 export const fetchMovieList: FetchMovieList = async (gameGenre, next) => {
   if (!next) {
@@ -57,6 +60,19 @@ export const fetchMovieList: FetchMovieList = async (gameGenre, next) => {
   if (Number(data.page) === 1) addMoviesToDB(fullList, gameGenre);
 
   return fullList;
+};
+
+// initial moviePair query fn
+export const getMoviePairFn = async (movieList: MovieTypes[] | undefined) => {
+  if (!movieList?.length) throw new Error('404 - no movie list');
+  const firstIndex = randomIndex(movieList);
+  let secondIndex = randomIndex(movieList);
+
+  while (firstIndex === secondIndex) secondIndex = randomIndex(movieList);
+
+  const moviePair: MoviePair = [movieList[firstIndex], movieList[secondIndex]];
+
+  return moviePair;
 };
 
 // fetch movie list from api
