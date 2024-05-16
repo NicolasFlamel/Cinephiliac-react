@@ -1,10 +1,10 @@
 import Dexie, { type Table } from 'dexie';
 import {
   GameGenreType,
-  Movie,
   MovieIndexedDB,
   MovieDBWithStats,
   MovieWithStats,
+  MovieTypes,
 } from 'types';
 
 class MySubClassedDexie extends Dexie {
@@ -24,10 +24,7 @@ db.version(1).stores({
   movies: 'imdbId, *genre', // Primary key and indexed props
 });
 
-type AddMovieToDBType = (
-  a: Array<Movie | MovieWithStats>,
-  b: GameGenreType,
-) => void;
+type AddMovieToDBType = (a: Array<MovieTypes>, b: GameGenreType) => void;
 export const addMoviesToDB: AddMovieToDBType = async (movieList, genre) => {
   const movieListFormatted = movieList.map((movie) => ({
     ...movie,

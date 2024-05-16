@@ -1,9 +1,9 @@
 import {
   GameGenreType,
-  Movie,
+  MovieType,
   MovieDatabaseApiType,
-  MovieIndexedDB,
   MovieWithStats,
+  MovieTypes,
 } from 'types';
 import { MovieStatsAPI } from 'types/apiTypes';
 import {
@@ -16,7 +16,7 @@ import {
 type FetchMovieList = (
   gameGenre: GameGenreType,
   next?: string,
-) => Promise<Movie[] | MovieIndexedDB[]>;
+) => Promise<MovieTypes[]>;
 // fetch movie list from api
 export const fetchMovieList: FetchMovieList = async (gameGenre, next) => {
   if (!next) {
@@ -44,7 +44,7 @@ export const fetchMovieList: FetchMovieList = async (gameGenre, next) => {
   if (!response.ok) throw new Error('Movie list fetch response was not ok');
 
   const data: MovieDatabaseApiType = await response.json();
-  const resultsList: Movie[] = data.results.map((movie) => ({
+  const resultsList: MovieType[] = data.results.map((movie) => ({
     imdbId: movie.id,
     title: movie.titleText.text,
   }));
@@ -68,11 +68,14 @@ export const fetchMovieStats = async (imdbId: string) => {
   const omdbUrl = `https://www.omdbapi.com/?i=${imdbId}&apikey=${process.env.REACT_APP_OMDB_Key}`;
   const response = await fetch(omdbUrl);
 
-  if (!response.ok) throw new Error('Movie stats fetch response was not ok');
+  if (!response.ok)
+    throw new Error('Movie stats fetch response was not ok', {
+      cause: response,
+    });
 
   const data: MovieStatsAPI = await response.json();
 
-  if (data.BoxOffice === 'N/A') throw new Error('No box office data');
+  if (data.BoxOffice === 'N/A') throw new Error('NoStats', { cause: imdbId });
 
   const movieStats: MovieWithStats = {
     imdbId,
