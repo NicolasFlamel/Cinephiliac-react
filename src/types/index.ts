@@ -15,20 +15,21 @@ const genres = [
   'Thriller',
 ] as const;
 
-export interface Movie {
+export interface MovieType {
   imdbId: string;
   title: string;
 }
 
-export interface MovieWithStats extends Movie {
+export interface MovieWithStats extends MovieType {
   boxOffice: string;
   rating: string;
   posterUrl?: string;
 }
 
-export type MovieTypes = Movie | MovieWithStats;
+export type MovieTypes = MovieType | MovieWithStats;
+export type MoviePair = [MovieTypes, MovieTypes];
 
-export interface MovieDBWithoutStats extends Movie {
+export interface MovieDBWithoutStats extends MovieType {
   genre: GameGenreType[];
 }
 
@@ -38,7 +39,7 @@ export interface MovieDBWithStats extends MovieWithStats {
 
 export type MovieIndexedDB = MovieDBWithoutStats | MovieDBWithStats;
 
-export type MovieList = Movie | MovieIndexedDB;
+export type MovieList = MovieType | MovieIndexedDB;
 
 export interface GameProps {
   gameMode: GameModeType;

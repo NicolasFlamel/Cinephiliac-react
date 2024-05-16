@@ -77,13 +77,7 @@ const Game = ({ gameMode, gameGenre, score }: GameProps) => {
           <MovieCard movieData={secondMovie} gameMode={gameMode} />
         </CardBody>
         <CardFooter className="flex flex-wrap justify-center gap-4">
-          <Button
-            color="danger"
-            onClick={() => handleAnswerClick('>')}
-            onKeyDown={(e) => {
-              if (e.code === 'KeyW') handleAnswerClick('>');
-            }}
-          >
+          <Button color="danger" onClick={() => handleAnswerClick('>')}>
             Higher
           </Button>
           <Button color="primary" onClick={() => handleAnswerClick('<')}>

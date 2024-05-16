@@ -8,20 +8,20 @@ import {
 } from '@tanstack/react-query';
 import {
   GameGenreType,
-  Movie,
   MovieList,
+  MoviePair,
   MovieTypes,
   MovieWithStats,
 } from 'types';
 import { fetchMovieList, fetchMovieStats } from './queryFn';
-import { movieListFn } from './mutationFn';
+import { movieListFn, moviePairFn } from './mutationFn';
 import { randomIndex } from './helpers';
 
 type UseGetMovieListType = (
   gameGenre: GameGenreType,
 ) => [
   UseQueryResult<MovieList[], Error>,
-  UseQueryResult<[MovieTypes, MovieTypes], Error>,
+  UseQueryResult<MoviePair, Error>,
   UseQueryResult<MovieWithStats, Error>[],
 ];
 export const useGetMovieList: UseGetMovieListType = (gameGenre) => {
@@ -33,9 +33,9 @@ export const useGetMovieList: UseGetMovieListType = (gameGenre) => {
 
   const movieList = listQuery?.data;
 
-  const pairQuery = useQuery<[MovieTypes, MovieTypes]>({
+  const pairQuery = useQuery<MoviePair>({
     queryKey: ['moviePair'],
-    queryFn: async (): Promise<[MovieTypes, MovieTypes]> => {
+    queryFn: async (): Promise<MoviePair> => {
       if (!movieList) throw new Error('no movie list');
       const firstIndex = randomIndex(movieList);
       let secondIndex = randomIndex(movieList);
@@ -56,6 +56,7 @@ export const useGetMovieList: UseGetMovieListType = (gameGenre) => {
           queryKey: ['movieStats', movie.imdbId],
           queryFn: () => fetchMovieStats(movie.imdbId),
           refetchOnWindowFocus: false,
+          retry: false,
         }))
       : [],
   });
@@ -63,14 +64,36 @@ export const useGetMovieList: UseGetMovieListType = (gameGenre) => {
   return [listQuery, pairQuery, statsQueries];
 };
 
+// mutate list and get new pair when answering correct
 export const useMutateMovieList = (gameGenre: GameGenreType) => {
   const qClient = useQueryClient();
 
   const mutation = useMutation({
     mutationFn: () => movieListFn(qClient, gameGenre),
-    onSuccess: ([newList, newPair]: [Movie[], [Movie, Movie]]) => {
-      qClient.setQueryData<Movie[]>(['movieList', gameGenre], newList);
-      qClient.setQueryData<[Movie, Movie]>(['moviePair'], newPair);
+    onSuccess: ([newList, newPair]: [MovieTypes[], MoviePair]) => {
+      qClient.setQueryData<MovieTypes[]>(['movieList', gameGenre], newList);
+      qClient.setQueryData<MoviePair>(['moviePair'], newPair);
+    },
+    onError: (error) => console.error(error),
+  });
+
+  return mutation;
+};
+
+// mutate pair when one fails
+export const useMutateMoviePair = (gameGenre: GameGenreType) => {
+  const qClient = useQueryClient();
+
+  const mutation = useMutation({
+    mutationFn: async (imdbId: string) =>
+      moviePairFn(qClient, gameGenre, imdbId),
+    onSuccess: ([newList, newPair, oldPair]: [
+      MovieTypes[],
+      MoviePair,
+      MoviePair,
+    ]) => {
+      qClient.setQueryData<MovieTypes[]>(['movieList', gameGenre], newList);
+      qClient.setQueryData<MoviePair>(['moviePair'], newPair);
     },
     onError: (error) => console.error(error),
   });

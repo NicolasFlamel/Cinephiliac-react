@@ -1,20 +1,36 @@
-import { GameModeType } from 'types';
+import { useEffect } from 'react';
+import { GameModeType, MovieWithStats } from 'types';
 import { Image } from '@nextui-org/react';
+import { UseQueryResult } from '@tanstack/react-query';
 import noImg from 'assets/img/no-image-placeholder.png';
+import { useMutateMoviePair } from 'api';
+import { removeMovieFromDB } from 'utils/MovieDB';
 
 interface MovieCardProps {
-  movieData: any;
+  movieData: UseQueryResult<MovieWithStats, Error>;
   gameMode: GameModeType;
   showStat?: boolean;
 }
 
 const MovieCard = ({ movieData, gameMode, showStat }: MovieCardProps) => {
+  const { isError, error, isPending, data } = movieData;
+  const { mutate: changePair } = useMutateMoviePair('All-Genres');
+
+  // if isError then change the movie
+  useEffect(() => {
+    console.log('useEffect');
+    if (isError) {
+      if (typeof error.cause === 'string') {
+        const imdbId = error.cause;
+        removeMovieFromDB(imdbId);
+        changePair(imdbId);
+      } else console.error(error);
+    }
+  }, [isError, error, changePair]);
+
   // remove this pending and instead use it inside normal return
-  if (movieData.isPending) return <h1>Loading stats</h1>;
-  else if (movieData.isError) {
-    console.error(movieData.error);
-    return <h1>Still Loading</h1>;
-  }
+  if (isPending) return <h1>Loading stats</h1>;
+  else if (isError) return <h1>Error, grabbing new movie</h1>;
 
   return (
     <article className="grid grid-row grid-rows-[auto max-content auto] grid-cols-subgrid text-center justify-items-center gap-4 py-4">
@@ -23,20 +39,18 @@ const MovieCard = ({ movieData, gameMode, showStat }: MovieCardProps) => {
           ': ' +
           (showStat
             ? gameMode === 'Box-Office'
-              ? movieData.data.boxOffice
-              : movieData.data.rating || 'Loading'
+              ? data.boxOffice
+              : data.rating || 'Loading'
             : '???')}
       </h2>
       <Image
         width={300}
         height={400}
         className="row-start-2"
-        src={
-          movieData.isPending ? undefined : movieData.data.posterUrl || noImg
-        }
-        alt={movieData.data.title + ' poster'}
+        src={isPending ? undefined : data.posterUrl || noImg}
+        alt={data.title + ' poster'}
       />
-      <h2 className="mt-auto">{movieData.data.title}</h2>
+      <h2 className="mt-auto">{data.title}</h2>
     </article>
   );
 };
