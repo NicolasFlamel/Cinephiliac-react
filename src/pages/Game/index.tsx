@@ -11,7 +11,6 @@ import {
   Divider,
 } from '@nextui-org/react';
 import { useGameState } from 'context/GameContext';
-import { CSSTransition, TransitionGroup } from 'react-transition-group';
 import { useQueryClient } from '@tanstack/react-query';
 
 const Game = ({ score }: GameProps) => {
