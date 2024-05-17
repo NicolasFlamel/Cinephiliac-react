@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { GameProps } from 'types';
-import { Fallback, Loading, MovieCard } from 'components';
+import { Fallback, GameOver, Loading, MovieCard } from 'components';
 import { useGetMovieList, useMutateNextMovie, useMutateRemovePair } from 'api';
 import {
   Button,
@@ -10,10 +10,12 @@ import {
   CardHeader,
   Divider,
 } from '@nextui-org/react';
-import GameOver from 'components/GameOver';
 import { useGameState } from 'context/GameContext';
+import { CSSTransition, TransitionGroup } from 'react-transition-group';
+import { useQueryClient } from '@tanstack/react-query';
 
 const Game = ({ score }: GameProps) => {
+  const qClient = useQueryClient();
   const { gameGenre, gameMode } = useGameState();
   const [gameIsOver, setGameIsOver] = useState(false);
   const [listQuery, pairQuery, [firstMovie, secondMovie]] =
@@ -23,7 +25,13 @@ const Game = ({ score }: GameProps) => {
 
   useEffect(() => {
     score.current = 0;
-  }, [score]);
+
+    return () => {
+      // clear the pair cache so wont appear on next game
+      const queryKey = ['moviePair', gameGenre];
+      qClient.resetQueries({ queryKey, exact: true });
+    };
+  }, [score, gameGenre, qClient]);
 
   useEffect(() => {
     if (!pairQuery.data) return;
@@ -64,10 +72,14 @@ const Game = ({ score }: GameProps) => {
   const handleAnswerClick = (userInput: '>' | '<') => {
     const correct = compareMovies(userInput);
 
-    if (!correct) return setGameIsOver(true);
+    if (!correct) return gameOver();
 
     score.current++;
-    listQuery.data.length ? nextMovie() : setGameIsOver(true);
+    listQuery.data.length ? nextMovie() : gameOver();
+  };
+
+  const gameOver = () => {
+    setGameIsOver(true);
   };
 
   return (

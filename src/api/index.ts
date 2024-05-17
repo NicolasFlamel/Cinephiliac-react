@@ -23,6 +23,7 @@ type UseGetMovieListType = (
   UseQueryResult<MoviePair, Error>,
   UseQueryResult<MovieWithStats, Error>[],
 ];
+// chain of queries to get movie list, pair and stats
 export const useGetMovieList: UseGetMovieListType = (gameGenre) => {
   const listQuery = useQuery({
     queryKey: ['movieList', gameGenre],
@@ -86,6 +87,7 @@ export const useMutateMoviePair = (gameGenre: GameGenreType) => {
   return mutation;
 };
 
+// removes pair from movie list
 export const useMutateRemovePair = (gameGenre: GameGenreType) => {
   const qClient = useQueryClient();
 
