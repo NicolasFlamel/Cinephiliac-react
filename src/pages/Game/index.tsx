@@ -1,7 +1,9 @@
 import { useEffect, useState } from 'react';
 import { GameProps } from 'types';
-import { Fallback, GameOver, Loading, MovieCard } from 'components';
+import { Fallback, GameOver, Loading, MovieMotion } from 'components';
 import { useGetMovieList, useMutateNextMovie, useMutateRemovePair } from 'api';
+import { useGameState } from 'context/GameContext';
+import { useQueryClient } from '@tanstack/react-query';
 import {
   Button,
   Card,
@@ -10,8 +12,6 @@ import {
   CardHeader,
   Divider,
 } from '@nextui-org/react';
-import { useGameState } from 'context/GameContext';
-import { useQueryClient } from '@tanstack/react-query';
 
 const Game = ({ score }: GameProps) => {
   const qClient = useQueryClient();
@@ -82,9 +82,9 @@ const Game = ({ score }: GameProps) => {
   };
 
   return (
-    <section className="flex justify-center">
-      <Card className="grid justify-center gap-4 p-4">
-        <CardHeader className="row-start-1 justify-center">
+    <section className="flex justify-center w-full">
+      <Card className="grid justify-center gap-4 p-4 w-full">
+        <CardHeader className="row-start-1 justify-center min-h-12">
           <h2 className="text-center max-w-max">
             Does <em> {pairQuery.data[1].title} </em>
             have a higher or lower {gameMode} amount than
@@ -92,9 +92,12 @@ const Game = ({ score }: GameProps) => {
           </h2>
         </CardHeader>
         <Divider />
-        <CardBody className="grid md:gap-4 md:grid-cols-2 md:divide-y-0 divide-y-large justify-center p-4">
-          <MovieCard movieData={firstMovie} showStat />
-          <MovieCard movieData={secondMovie} />
+        <CardBody className="justify-center overflow-hidden min-h-[650px]">
+          <MovieMotion
+            moviePair={[firstMovie, secondMovie]}
+            backupData={pairQuery.data}
+            className="grid md:gap-4 md:grid-cols-2 md:divide-y-0 divide-y-large justify-center p-4"
+          />
         </CardBody>
         <CardFooter className="flex flex-wrap justify-center gap-4">
           <Button color="danger" onClick={() => handleAnswerClick('>')}>

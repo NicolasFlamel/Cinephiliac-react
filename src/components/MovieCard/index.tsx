@@ -33,7 +33,7 @@ const MovieCard = ({ movieData, showStat }: MovieCardProps) => {
   else if (isError) return <h1>Error, grabbing new movie</h1>;
 
   return (
-    <article className="grid grid-row grid-rows-[auto max-content auto] grid-cols-subgrid text-center justify-items-center gap-4 py-4">
+    <>
       <h2 className="row-start-1">
         {gameMode +
           ': ' +
@@ -51,7 +51,7 @@ const MovieCard = ({ movieData, showStat }: MovieCardProps) => {
         alt={data.title + ' poster'}
       />
       <h2 className="mt-auto">{data.title}</h2>
-    </article>
+    </>
   );
 };
 
