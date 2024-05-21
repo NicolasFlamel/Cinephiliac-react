@@ -12,7 +12,8 @@ const queryClient = new QueryClient();
 function App() {
   const navigate = useNavigate();
   const score = useRef<number>(0);
-  const [darkMode, setDarkMode] = useState(false);
+  const isDarkMode = localStorage.getItem('darkMode') === 'true';
+  const [darkMode, setDarkMode] = useState(isDarkMode);
   const docClassList = document.documentElement.classList;
 
   if (darkMode) docClassList.add('dark');
