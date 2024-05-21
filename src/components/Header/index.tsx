@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { ChangeEvent, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import { Dispatcher } from 'types';
 import { ReactComponent as Sun } from 'assets/img/sun.svg';
@@ -20,9 +20,17 @@ interface HeaderProps extends React.HTMLAttributes<HTMLElement> {
   setDarkMode: Dispatcher<boolean>;
 }
 
+type UpdateThemeParam = ChangeEvent<HTMLInputElement>;
+
 const Header = ({ darkMode, setDarkMode }: HeaderProps) => {
   let location = useLocation();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+
+  const updateTheme = ({ currentTarget }: UpdateThemeParam) => {
+    const { checked } = currentTarget;
+    localStorage.setItem('darkMode', checked.toString());
+    setDarkMode(checked);
+  };
 
   return (
     <Navbar
@@ -59,7 +67,7 @@ const Header = ({ darkMode, setDarkMode }: HeaderProps) => {
             isSelected={darkMode}
             startContent={<Sun fill="yellow" />}
             endContent={<Moon fill="black" />}
-            onChange={({ currentTarget }) => setDarkMode(currentTarget.checked)}
+            onChange={updateTheme}
           />
         </NavbarItem>
       </NavbarContent>
@@ -86,7 +94,7 @@ const Header = ({ darkMode, setDarkMode }: HeaderProps) => {
             isSelected={darkMode}
             startContent={<Sun fill="yellow" />}
             endContent={<Moon fill="black" />}
-            onChange={({ currentTarget }) => setDarkMode(currentTarget.checked)}
+            onChange={updateTheme}
           />
         </NavbarMenuItem>
       </NavbarMenu>
