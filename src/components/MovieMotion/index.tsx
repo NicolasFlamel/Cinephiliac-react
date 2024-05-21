@@ -42,6 +42,7 @@ const MovieMotion = ({
               }}
               exit={{ x: -100, y: 200, opacity: 0 }}
               transition={{ duration: 0.8 }}
+              drag={false}
               className="grid grid-row grid-rows-[auto max-content auto] grid-cols-subgrid text-center justify-items-center gap-4 py-4"
             >
               <MovieCard movieData={movie} showStat={!index} />
