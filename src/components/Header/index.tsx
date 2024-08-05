@@ -3,6 +3,7 @@ import { useLocation } from 'react-router-dom';
 import { Dispatcher } from 'types';
 import Sun from 'assets/img/sun.svg';
 import Moon from 'assets/img/moon.svg';
+import { Icon } from 'components';
 import {
   Link,
   Navbar,
@@ -55,7 +56,7 @@ const Header = ({ darkMode, setDarkMode }: HeaderProps) => {
         justify="center"
       >
         <NavbarItem isActive={location.pathname === '/'}>
-          <Link href={''}>Home</Link>
+          <Link href={'/'}>Home</Link>
         </NavbarItem>
         <NavbarItem isActive={location.pathname === '/scoreboard'}>
           <Link href={'/scoreboard'}>Scoreboard</Link>
@@ -66,8 +67,8 @@ const Header = ({ darkMode, setDarkMode }: HeaderProps) => {
           <Switch
             size="lg"
             isSelected={darkMode}
-            startContent={<img src={Sun} style={svgStyle} />}
-            endContent={<img src={Moon} style={svgStyle} />}
+            startContent={<Icon src={Sun} />}
+            endContent={<Icon src={Moon} />}
             onChange={updateTheme}
           />
         </NavbarItem>
