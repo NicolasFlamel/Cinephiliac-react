@@ -15,6 +15,10 @@ module.exports = {
       'error',
       { ignoreRestSiblings: true },
     ],
+    '@typescript-eslint/no-unused-expressions': [
+      'error',
+      { allowTernary: true },
+    ],
     'react-refresh/only-export-components': [
       'warn',
       { allowConstantExport: true },

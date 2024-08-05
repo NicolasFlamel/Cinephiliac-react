@@ -74,7 +74,7 @@ const Game = ({ score }: GameProps) => {
     if (!correct) return gameOver();
 
     score.current++;
-    listQuery.data.length ? nextMovie() : gameOver();
+    listQuery.data.length > 0 ? nextMovie() : gameOver();
   };
 
   const gameOver = () => {
