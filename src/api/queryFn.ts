@@ -31,7 +31,7 @@ export const fetchMovieList: FetchMovieList = async (gameGenre, next) => {
   const options = {
     method: 'GET',
     headers: {
-      'X-RapidAPI-Key': process.env.REACT_APP_RAPID_API!,
+      'X-RapidAPI-Key': import.meta.env.VITE_APP_RAPID_API,
       'X-RapidAPI-Host': 'moviesdatabase.p.rapidapi.com',
     },
   };
@@ -81,7 +81,9 @@ export const fetchMovieStats = async (imdbId: string) => {
 
   if (movie && 'boxOffice' in movie) return movie;
 
-  const omdbUrl = `https://www.omdbapi.com/?i=${imdbId}&apikey=${process.env.REACT_APP_OMDB_Key}`;
+  const omdbUrl = `https://www.omdbapi.com/?i=${imdbId}&apikey=${
+    import.meta.env.VITE_APP_OMDB_Key
+  }`;
   const response = await fetch(omdbUrl);
 
   if (!response.ok)
