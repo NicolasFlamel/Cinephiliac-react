@@ -12,6 +12,7 @@ export default defineConfig({
       typescript: {
         tsconfigPath: 'tsconfig.app.json',
       },
+      eslint: { lintCommand: 'eslint "./src/**/*.{ts,tsx}"' },
       overlay: true,
     }),
   ],
