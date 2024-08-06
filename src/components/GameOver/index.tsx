@@ -61,6 +61,7 @@ const GameOver = ({ score }: GameProps) => {
                 type="text"
                 label="Username"
                 name="username"
+                isRequired={true}
                 onChange={(e) => (username.current = e.target.value)}
               />
               <Button className="m-auto" type="submit" id="save-btn">
