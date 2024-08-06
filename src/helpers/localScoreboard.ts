@@ -15,3 +15,12 @@ export const addScore = (value: ScoreData): ScoreData[] => {
 
   return newScores;
 };
+
+export const deleteScores = (id: string): boolean => {
+  const scores = getScores();
+  const newScores = scores.filter((score) => score.id !== id);
+
+  localStorage.setItem(key, JSON.stringify(newScores));
+
+  return true;
+};

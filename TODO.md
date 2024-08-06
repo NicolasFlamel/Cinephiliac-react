@@ -1,0 +1,1 @@
+- slideshow of movies on home page
