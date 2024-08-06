@@ -21,32 +21,34 @@ function App() {
 
   return (
     <NextUIProvider navigate={navigate}>
-      <div className="App container mx-auto p-4 bg-foreground-200 max-w-screen-lg">
-        <Header darkMode={darkMode} setDarkMode={setDarkMode} />
-        <main>
-          <Routes>
-            <Route
-              path="/"
-              element={
-                <GameProvider>
-                  <Home />
-                </GameProvider>
-              }
-            />
-            <Route
-              path="/game"
-              element={
-                <GameProvider>
-                  <QueryClientProvider client={queryClient}>
-                    <Game score={score} />
-                  </QueryClientProvider>
-                </GameProvider>
-              }
-            />
-            <Route path="/scoreboard" element={<Scoreboard />} />
-            <Route path="/*" element={<Navigate to="/" />} />
-          </Routes>
-        </main>
+      <div className="App grid min-h-screen grid-rows-[0.3fr_auto_1fr]">
+        <div className="container mx-auto p-4 bg-foreground-200 max-w-screen-lg min-h-[600px] row-start-2">
+          <Header darkMode={darkMode} setDarkMode={setDarkMode} />
+          <main>
+            <Routes>
+              <Route
+                path="/"
+                element={
+                  <GameProvider>
+                    <Home />
+                  </GameProvider>
+                }
+              />
+              <Route
+                path="/game"
+                element={
+                  <GameProvider>
+                    <QueryClientProvider client={queryClient}>
+                      <Game score={score} />
+                    </QueryClientProvider>
+                  </GameProvider>
+                }
+              />
+              <Route path="/scoreboard" element={<Scoreboard />} />
+              <Route path="/*" element={<Navigate to="/" />} />
+            </Routes>
+          </main>
+        </div>
       </div>
     </NextUIProvider>
   );
