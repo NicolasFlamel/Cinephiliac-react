@@ -1,10 +1,10 @@
 import {
-  GameGenreType,
   MovieType,
   MovieDatabaseApiType,
   MovieWithStats,
   MovieTypes,
   MoviePair,
+  isGameGenreType,
 } from 'types';
 import { MovieStatsAPI } from 'types/apiTypes';
 import {
@@ -14,33 +14,39 @@ import {
   putMovieDataIntoDB,
 } from 'utils/MovieDB';
 import { randomIndex } from './helpers';
+import { QueryFunctionContext } from '@tanstack/react-query';
 
 type FetchMovieList = (
-  gameGenre: GameGenreType,
+  context: QueryFunctionContext,
   next?: string,
 ) => Promise<MovieTypes[]>;
 
 // fetch movie list from api
-export const fetchMovieList: FetchMovieList = async (gameGenre, next) => {
-  if (!next) {
-    const localMovieList = await getMovieListFromDB(gameGenre);
+export const fetchMovieList: FetchMovieList = async (context, next) => {
+  const { queryKey, signal } = context;
+  const genre = queryKey[1];
+
+  if (!isGameGenreType(genre)) throw new Error('queryKey[1] is not a genre');
+  else if (!next) {
+    const localMovieList = await getMovieListFromDB(genre);
     if (localMovieList.length > 9) return localMovieList;
   }
 
   console.log('fetching movie list');
-  const options = {
+  const options: RequestInit = {
     method: 'GET',
     headers: {
       'X-RapidAPI-Key': import.meta.env.VITE_APP_RAPID_API,
       'X-RapidAPI-Host': 'moviesdatabase.p.rapidapi.com',
     },
+    signal,
   };
   const url =
     'https://moviesdatabase.p.rapidapi.com' +
     (next
       ? next
       : '/titles?list=top_rated_english_250&startYear=2000' +
-        (gameGenre !== 'All-Genres' ? `&genre=${gameGenre}` : ''));
+        (genre !== 'All-Genres' ? `&genre=${genre}` : ''));
 
   const response = await fetch(url, { ...options });
 
@@ -54,10 +60,10 @@ export const fetchMovieList: FetchMovieList = async (gameGenre, next) => {
 
   if (!data.next) return resultsList;
 
-  const nextData = await fetchMovieList(gameGenre, data.next);
+  const nextData = await fetchMovieList(context, data.next);
   const fullList = resultsList.concat(nextData);
 
-  if (Number(data.page) === 1) addMoviesToDB(fullList, gameGenre);
+  if (Number(data.page) === 1) addMoviesToDB(fullList, genre);
 
   return fullList;
 };
