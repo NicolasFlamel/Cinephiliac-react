@@ -9,7 +9,7 @@ import {
   Divider,
   Input,
 } from '@nextui-org/react';
-import { addScore } from 'helpers/localScoreboard';
+import { addScore } from 'hooks/useLocalScores';
 import { useGameState } from 'context/GameContext';
 
 const GameOver = ({ score }: GameProps) => {

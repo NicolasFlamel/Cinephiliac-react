@@ -9,18 +9,16 @@ import {
   getKeyValue,
   Tooltip,
 } from '@nextui-org/react';
-import { deleteScores, getScores } from 'helpers/localScoreboard';
 import { DeleteIcon } from 'components/DeleteIcon';
+import useLocalScores from 'hooks/useLocalScores';
 
 const Scoreboard = () => {
-  const scoreboard = getScores();
+  const { scores, deleteScore } = useLocalScores();
 
-  const boxOfficeScores = scoreboard.filter(
+  const boxOfficeScores = scores.filter(
     (score) => score.gameMode === 'Box-Office',
   );
-  const ratingsScores = scoreboard.filter(
-    (score) => score.gameMode === 'Ratings',
-  );
+  const ratingsScores = scores.filter((score) => score.gameMode === 'Ratings');
   const board = [
     ['Box-Office', boxOfficeScores],
     ['Ratings', ratingsScores],
@@ -31,18 +29,22 @@ const Scoreboard = () => {
       {board.map(([mode, scores]) => (
         <section key={mode} className="my-4">
           <h2 className="my-2 font-bold text-inherit text-2xl">Box Office</h2>
-          <ScoreTable mode={mode} scores={scores} />
+          <ScoreTable mode={mode} scores={scores} deleteScore={deleteScore} />
         </section>
       ))}
     </section>
   );
 };
 
-type ScoreTableProps = { mode: GameModeType; scores: ScoreData[] };
+type ScoreTableProps = {
+  mode: GameModeType;
+  scores: ScoreData[];
+  deleteScore: (id: string) => void;
+};
 
-const ScoreTable = ({ mode, scores }: ScoreTableProps) => {
+const ScoreTable = ({ mode, scores, deleteScore }: ScoreTableProps) => {
   const handleDelete = (id: string) => () => {
-    deleteScores(id);
+    deleteScore(id);
   };
 
   const columns = [
