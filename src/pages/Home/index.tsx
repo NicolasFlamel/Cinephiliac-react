@@ -10,8 +10,6 @@ import {
 import { genres, gameModes } from './data';
 import { useGameDispatch, useGameState } from 'context/GameContext';
 
-interface HomeProps {}
-
 interface FormElements extends HTMLFormControlsCollection {
   game: HTMLInputElement;
   genre: HTMLInputElement;
@@ -21,7 +19,7 @@ interface YourFormElement extends HTMLFormElement {
   readonly elements: FormElements;
 }
 
-const Home = (props: HomeProps) => {
+const Home = () => {
   const navigate = useNavigate();
   const { gameGenre, gameMode } = useGameState();
   const { setGameGenre, setGameMode } = useGameDispatch();

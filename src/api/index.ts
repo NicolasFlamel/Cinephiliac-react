@@ -27,7 +27,7 @@ type UseGetMovieListType = (
 export const useGetMovieList: UseGetMovieListType = (gameGenre) => {
   const listQuery = useQuery({
     queryKey: ['movieList', gameGenre],
-    queryFn: () => fetchMovieList(gameGenre),
+    queryFn: (context) => fetchMovieList(context),
     refetchOnWindowFocus: false,
   });
 

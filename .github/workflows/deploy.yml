@@ -21,8 +21,8 @@ jobs:
           npm ci
           npm run build
         env:
-          REACT_APP_RAPID_API: ${{ secrets.REACT_APP_RAPID_API }}
-          REACT_APP_OMDB_Key: ${{ secrets.REACT_APP_OMDB_Key }}
+          VITE_APP_RAPID_API: ${{ secrets.REACT_APP_RAPID_API }}
+          VITE_APP_OMDB_Key: ${{ secrets.REACT_APP_OMDB_Key }}
       - name: Deploy
         uses: JamesIves/github-pages-deploy-action@releases/v4
         with:

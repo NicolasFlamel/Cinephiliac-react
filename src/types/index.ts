@@ -59,10 +59,10 @@ export type GameGenreType = (typeof genres)[number];
 
 export type Dispatcher<T> = Dispatch<SetStateAction<T>>;
 
-export const isGameModeType = (value: string): value is GameModeType =>
+export const isGameModeType = (value: unknown): value is GameModeType =>
   gameModes.includes(value as GameModeType);
 
-export const isGameGenreType = (value: string): value is GameGenreType =>
+export const isGameGenreType = (value: unknown): value is GameGenreType =>
   genres.includes(value as GameGenreType);
 
 export type { MovieDatabaseApiType, MovieDatabaseResultsType };

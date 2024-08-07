@@ -60,19 +60,10 @@ export const addMoviesToDB: AddMovieToDBType = async (movieList, genre) => {
   }
 };
 
-export const putMovieDataIntoDB = async ({
-  imdbId,
-  title,
-  boxOffice,
-  posterUrl,
-  rating,
-}: MovieWithStats) => {
-  return await db.movies.update(imdbId, {
-    title,
-    boxOffice,
-    rating,
-    posterUrl,
-  });
+export const putMovieDataIntoDB = async (movieStats: MovieWithStats) => {
+  const { imdbId, ...stats } = movieStats;
+
+  return await db.movies.update(imdbId, stats);
 };
 
 export const getMovieListFromDB = async (genre: GameGenreType) => {

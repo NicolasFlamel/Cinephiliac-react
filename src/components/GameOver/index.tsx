@@ -9,7 +9,7 @@ import {
   Divider,
   Input,
 } from '@nextui-org/react';
-import { addScore } from 'helpers/localScoreboard';
+import { addScore } from 'hooks/useLocalScores';
 import { useGameState } from 'context/GameContext';
 
 const GameOver = ({ score }: GameProps) => {
@@ -61,6 +61,7 @@ const GameOver = ({ score }: GameProps) => {
                 type="text"
                 label="Username"
                 name="username"
+                isRequired={true}
                 onChange={(e) => (username.current = e.target.value)}
               />
               <Button className="m-auto" type="submit" id="save-btn">

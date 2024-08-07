@@ -1,8 +1,9 @@
 import { ChangeEvent, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import { Dispatcher } from 'types';
-import { ReactComponent as Sun } from 'assets/img/sun.svg';
-import { ReactComponent as Moon } from 'assets/img/moon.svg';
+import Sun from 'assets/img/sun.svg';
+import Moon from 'assets/img/moon.svg';
+import { Icon } from 'components';
 import {
   Link,
   Navbar,
@@ -23,8 +24,9 @@ interface HeaderProps extends React.HTMLAttributes<HTMLElement> {
 type UpdateThemeParam = ChangeEvent<HTMLInputElement>;
 
 const Header = ({ darkMode, setDarkMode }: HeaderProps) => {
-  let location = useLocation();
+  const location = useLocation();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const svgStyle: React.CSSProperties = { width: '1em' };
 
   const updateTheme = ({ currentTarget }: UpdateThemeParam) => {
     const { checked } = currentTarget;
@@ -54,7 +56,7 @@ const Header = ({ darkMode, setDarkMode }: HeaderProps) => {
         justify="center"
       >
         <NavbarItem isActive={location.pathname === '/'}>
-          <Link href={''}>Home</Link>
+          <Link href={'/'}>Home</Link>
         </NavbarItem>
         <NavbarItem isActive={location.pathname === '/scoreboard'}>
           <Link href={'/scoreboard'}>Scoreboard</Link>
@@ -65,8 +67,8 @@ const Header = ({ darkMode, setDarkMode }: HeaderProps) => {
           <Switch
             size="lg"
             isSelected={darkMode}
-            startContent={<Sun fill="yellow" />}
-            endContent={<Moon fill="black" />}
+            startContent={<Icon src={Sun} />}
+            endContent={<Icon src={Moon} />}
             onChange={updateTheme}
           />
         </NavbarItem>
@@ -92,8 +94,8 @@ const Header = ({ darkMode, setDarkMode }: HeaderProps) => {
           <Switch
             size="lg"
             isSelected={darkMode}
-            startContent={<Sun fill="yellow" />}
-            endContent={<Moon fill="black" />}
+            startContent={<img src={Sun} style={svgStyle} />}
+            endContent={<img src={Moon} style={svgStyle} />}
             onChange={updateTheme}
           />
         </NavbarMenuItem>
