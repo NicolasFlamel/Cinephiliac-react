@@ -21,8 +21,8 @@ function App() {
 
   return (
     <NextUIProvider navigate={navigate}>
-      <div className="App grid min-h-screen grid-rows-[0.3fr_auto_1fr]">
-        <div className="container mx-auto p-4 bg-foreground-200 max-w-screen-lg min-h-[600px] row-start-2">
+      <div className="App grid min-h-screen sm:grid-rows-[0.3fr_auto_1fr]">
+        <div className="container mx-auto p-4 bg-foreground-200 max-w-screen-lg min-h-[600px] sm:row-start-2">
           <Header darkMode={darkMode} setDarkMode={setDarkMode} />
           <main>
             <Routes>

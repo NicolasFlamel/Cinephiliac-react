@@ -77,7 +77,7 @@ const Header = ({ darkMode, setDarkMode }: HeaderProps) => {
       {/* Navbar mobile menu */}
       <NavbarMenu className="m-4 p-4 gap-8 w-auto">
         <NavbarMenuItem>
-          <Link href={''} size="lg" onClick={() => setIsMenuOpen(false)}>
+          <Link href={'/'} size="lg" onClick={() => setIsMenuOpen(false)}>
             Home
           </Link>
         </NavbarMenuItem>
