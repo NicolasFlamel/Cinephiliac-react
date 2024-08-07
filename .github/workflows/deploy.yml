@@ -5,6 +5,10 @@ on:
   # Runs on pushes targeting the default branch
   push:
     branches: ['main']
+    paths:
+      - src/**
+      - public/**
+      - .github/workflows/deploy.yml
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
@@ -39,6 +43,9 @@ jobs:
         run: npm ci
       - name: Build
         run: npm run build
+        env:
+          VITE_APP_RAPID_API: ${{ secrets.REACT_APP_RAPID_API }}
+          VITE_APP_OMDB_Key: ${{ secrets.REACT_APP_OMDB_Key }}
       - name: Setup Pages
         uses: actions/configure-pages@v4
       - name: Upload artifact
