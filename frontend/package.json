@@ -10,8 +10,7 @@
     "dev": "vite",
     "build": "tsc -b && vite build",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
-    "preview": "vite preview",
-    "prettier": "npx prettier --write ."
+    "preview": "vite preview"
   },
   "dependencies": {
     "@nextui-org/react": "^2.3.5",
@@ -36,9 +35,7 @@
     "eslint-plugin-react-refresh": "^0.4.6",
     "gh-pages": "^6.1.1",
     "postcss": "^8.4.40",
-    "prettier": "^3.1.0",
     "tailwindcss": "^3.4.7",
-    "typescript": "^5.5.4",
     "vite": "^5.3.5",
     "vite-plugin-checker": "^0.7.2",
     "vite-tsconfig-paths": "^4.3.2"
