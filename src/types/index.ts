@@ -11,19 +11,19 @@ const genres = [
   'Family',
   'Horror',
   'Romance',
-  'Sci-Fi',
+  'Science Fiction',
   'Thriller',
 ] as const;
 
 export interface MovieType {
   imdbId: string;
   title: string;
+  posterUrl: string;
 }
 
 export interface MovieWithStats extends MovieType {
   boxOffice: string;
   rating: string;
-  posterUrl?: string;
 }
 
 export type MovieTypes = MovieType | MovieWithStats;
