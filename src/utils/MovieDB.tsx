@@ -5,6 +5,7 @@ import {
   MovieDBWithStats,
   MovieWithStats,
   MovieTypes,
+  MovieDBWithoutStats,
 } from 'types';
 
 class MySubClassedDexie extends Dexie {
@@ -26,16 +27,23 @@ db.version(1).stores({
 
 type AddMovieToDBType = (a: Array<MovieTypes>, b: GameGenreType) => void;
 export const addMoviesToDB: AddMovieToDBType = async (movieList, genre) => {
-  const movieListFormatted = movieList.map((movie) => ({
-    ...movie,
-    genre: [genre],
-  }));
+  const uniqueMovieList = getUniqueMovieList(movieList);
+  const movieListFormatted = uniqueMovieList.map<MovieDBWithoutStats>(
+    (movie) => ({
+      ...movie,
+      genre: [genre],
+    }),
+  );
   const idList = movieListFormatted.map((movie) => movie.imdbId);
 
   try {
-    const movieFound = await db.movies.where('imdbId').anyOf(idList).toArray();
+    const moviesFoundInDB = await db.movies
+      .where('imdbId')
+      .anyOf(idList)
+      .toArray();
 
-    if (movieFound.length) {
+    if (moviesFoundInDB.length) {
+      // updated already saved movies
       await db.movies
         .where('imdbId')
         .anyOf(idList)
@@ -47,8 +55,9 @@ export const addMoviesToDB: AddMovieToDBType = async (movieList, genre) => {
         });
     }
 
+    // added remaining movies
     const missingMovies = movieListFormatted.filter((movieL) => {
-      const duplicate = movieFound.some(
+      const duplicate = moviesFoundInDB.some(
         (movieF) => movieF.imdbId === movieL.imdbId,
       );
       return !duplicate;
@@ -78,4 +87,20 @@ export const getMovieFromDB = async (imdbId: string) => {
 
 export const removeMovieFromDB = async (imdbId: string) => {
   return db.movies.delete(imdbId);
+};
+
+// remove duplicates from MovieTypes[]
+const getUniqueMovieList = (normalList: MovieTypes[]): MovieTypes[] => {
+  const uniqueList = normalList.reduce<MovieTypes[]>((movieList, movie) => {
+    const hasMovie = movieList.some(
+      (someMovie) => someMovie.imdbId === movie.imdbId,
+    );
+
+    if (hasMovie) return movieList;
+
+    movieList.push(movie);
+    return movieList;
+  }, []);
+
+  return uniqueList;
 };
