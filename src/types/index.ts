@@ -1,5 +1,11 @@
 import { Dispatch, MutableRefObject, SetStateAction } from 'react';
-import { MovieDatabaseApiType, MovieDatabaseResultsType } from './apiTypes';
+import {
+  MovieDatabaseApiType,
+  MovieDatabaseResultsType,
+  TMDBApi,
+  TMDBMovieData,
+  TMDBExternalIds,
+} from './apiTypes';
 
 const gameModes = ['Box-Office', 'Ratings'] as const;
 const genres = [
@@ -65,4 +71,10 @@ export const isGameModeType = (value: unknown): value is GameModeType =>
 export const isGameGenreType = (value: unknown): value is GameGenreType =>
   genres.includes(value as GameGenreType);
 
-export type { MovieDatabaseApiType, MovieDatabaseResultsType };
+export type {
+  MovieDatabaseApiType,
+  MovieDatabaseResultsType,
+  TMDBApi,
+  TMDBMovieData,
+  TMDBExternalIds,
+};
