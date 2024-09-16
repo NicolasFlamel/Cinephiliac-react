@@ -44,8 +44,8 @@ jobs:
       - name: Build
         run: npm run build
         env:
-          VITE_APP_RAPID_API: ${{ secrets.REACT_APP_RAPID_API }}
-          VITE_APP_OMDB_Key: ${{ secrets.REACT_APP_OMDB_Key }}
+          VITE_TMDB_ACCESS_KEY: ${{ secrets.VITE_TMDB_ACCESS_KEY }}
+          VITE_OMDB_KEY: ${{ secrets.VITE_OMDB_KEY }}
       - name: Setup Pages
         uses: actions/configure-pages@v4
       - name: Upload artifact
