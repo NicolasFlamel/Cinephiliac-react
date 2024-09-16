@@ -92,11 +92,11 @@ const Game = ({ score }: GameProps) => {
           </h2>
         </CardHeader>
         <Divider />
-        <CardBody className="justify-center overflow-hidden min-h-[650px]">
+        <CardBody className="justify-center overflow-hidden md:min-h-[650px] min-h-[1060px]">
           <MovieMotion
             moviePair={[firstMovie, secondMovie]}
             backupData={pairQuery.data}
-            className="grid md:gap-4 md:grid-cols-2 md:divide-y-0 divide-y-large justify-center p-4"
+            className="grid md:gap-4 md:grid-cols-2 md:divide-y-0 divide-y-large p-4"
           />
         </CardBody>
         <CardFooter className="flex flex-wrap justify-center gap-4">
