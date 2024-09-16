@@ -17,6 +17,6 @@ export const genres: genresList = [
   { label: 'Family', value: 'Family' },
   { label: 'Horror', value: 'Horror' },
   { label: 'Romance', value: 'Romance' },
-  { label: 'Sci-Fi', value: 'Sci-Fi' },
+  { label: 'Sci-Fi', value: 'Science Fiction' },
   { label: 'Thriller', value: 'Thriller' },
 ];

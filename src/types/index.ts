@@ -1,5 +1,11 @@
 import { Dispatch, MutableRefObject, SetStateAction } from 'react';
-import { MovieDatabaseApiType, MovieDatabaseResultsType } from './apiTypes';
+import {
+  MovieDatabaseApiType,
+  MovieDatabaseResultsType,
+  TMDBApi,
+  TMDBMovieData,
+  TMDBExternalIds,
+} from './apiTypes';
 
 const gameModes = ['Box-Office', 'Ratings'] as const;
 const genres = [
@@ -11,19 +17,19 @@ const genres = [
   'Family',
   'Horror',
   'Romance',
-  'Sci-Fi',
+  'Science Fiction',
   'Thriller',
 ] as const;
 
 export interface MovieType {
   imdbId: string;
   title: string;
+  posterUrl: string;
 }
 
 export interface MovieWithStats extends MovieType {
   boxOffice: string;
   rating: string;
-  posterUrl?: string;
 }
 
 export type MovieTypes = MovieType | MovieWithStats;
@@ -65,4 +71,10 @@ export const isGameModeType = (value: unknown): value is GameModeType =>
 export const isGameGenreType = (value: unknown): value is GameGenreType =>
   genres.includes(value as GameGenreType);
 
-export type { MovieDatabaseApiType, MovieDatabaseResultsType };
+export type {
+  MovieDatabaseApiType,
+  MovieDatabaseResultsType,
+  TMDBApi,
+  TMDBMovieData,
+  TMDBExternalIds,
+};

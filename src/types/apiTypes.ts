@@ -55,6 +55,40 @@ export type MovieStatsAPI = {
   Response: string;
 };
 
+export type TMDBApi = {
+  page: number;
+  results: TMDBMovieData[];
+  total_pages: number;
+  total_results: number;
+};
+
+export type TMDBMovieData = {
+  adult: boolean;
+  backdrop_path?: string;
+  genre_ids: number[];
+  id: number;
+  original_language: string;
+  original_title: string;
+  overview: string;
+  popularity: number;
+  poster_path: string;
+  release_date: string;
+  title: string;
+  video: boolean;
+  vote_average: number;
+  vote_count: number;
+  rating?: number;
+};
+
+export type TMDBExternalIds = {
+  id: number;
+  imdb_id?: string;
+  facebook_id?: string;
+  instagram_id?: string;
+  twitter_id?: string;
+  wikidata_id?: string;
+};
+
 /**
  * {
   "Title": "The Martian",
