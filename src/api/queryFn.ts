@@ -1,12 +1,11 @@
 import {
   MovieType,
-  MovieDatabaseApiType,
   MovieWithStats,
   MovieTypes,
   MoviePair,
   isGameGenreType,
 } from 'types';
-import { MovieStatsAPI } from 'types/apiTypes';
+import { MovieStatsAPI, TMDBExternalIds } from 'types/apiTypes';
 import {
   addMoviesToDB,
   getMovieFromDB,
@@ -14,58 +13,51 @@ import {
   putMovieDataIntoDB,
 } from 'utils/MovieDB';
 import { randomIndex } from './helpers';
+import { fetchMovies, getExternalIds } from './tmdbAPI';
 import { QueryFunctionContext } from '@tanstack/react-query';
 
 type FetchMovieList = (
   context: QueryFunctionContext,
   next?: string,
-) => Promise<MovieTypes[]>;
+) => Promise<MovieType[]>;
 
 // fetch movie list from api
-export const fetchMovieList: FetchMovieList = async (context, next) => {
+export const fetchMovieList: FetchMovieList = async (context) => {
   const { queryKey, signal } = context;
   const genre = queryKey[1];
 
   if (!isGameGenreType(genre)) throw new Error('queryKey[1] is not a genre');
-  else if (!next) {
+  else {
     const localMovieList = await getMovieListFromDB(genre);
     if (localMovieList.length > 9) return localMovieList;
   }
 
   console.log('fetching movie list');
-  const options: RequestInit = {
-    method: 'GET',
-    headers: {
-      'X-RapidAPI-Key': import.meta.env.VITE_APP_RAPID_API,
-      'X-RapidAPI-Host': 'moviesdatabase.p.rapidapi.com',
-    },
-    signal,
-  };
-  const url =
-    'https://moviesdatabase.p.rapidapi.com' +
-    (next
-      ? next
-      : '/titles?list=top_rated_english_250&startYear=2000' +
-        (genre !== 'All-Genres' ? `&genre=${genre}` : ''));
 
-  const response = await fetch(url, { ...options });
+  const rawTMDBData = await fetchMovies(genre, { signal });
 
-  if (!response.ok) throw new Error('Movie list fetch response was not ok');
+  const externalIds: TMDBExternalIds[] = await Promise.all(
+    getExternalIds(rawTMDBData, { signal }),
+  );
+  const movieList: MovieType[] = [];
 
-  const data: MovieDatabaseApiType = await response.json();
-  const resultsList: MovieType[] = data.results.map((movie) => ({
-    imdbId: movie.id,
-    title: movie.titleText.text,
-  }));
+  for (const rawMovie of rawTMDBData) {
+    const foundId = externalIds.find(
+      (externalId) => externalId.id === rawMovie.id,
+    );
 
-  if (!data.next) return resultsList;
+    if (!foundId || !foundId.imdb_id) continue;
 
-  const nextData = await fetchMovieList(context, data.next);
-  const fullList = resultsList.concat(nextData);
+    movieList.push({
+      imdbId: foundId.imdb_id,
+      title: rawMovie.title,
+      posterUrl: rawMovie.poster_path,
+    });
+  }
 
-  if (Number(data.page) === 1) addMoviesToDB(fullList, genre);
+  addMoviesToDB(movieList, genre);
 
-  return fullList;
+  return movieList;
 };
 
 // initial moviePair query fn
@@ -88,7 +80,7 @@ export const fetchMovieStats = async (imdbId: string) => {
   if (movie && 'boxOffice' in movie) return movie;
 
   const omdbUrl = `https://www.omdbapi.com/?i=${imdbId}&apikey=${
-    import.meta.env.VITE_APP_OMDB_Key
+    import.meta.env.VITE_OMDB_KEY
   }`;
   const response = await fetch(omdbUrl);
 
